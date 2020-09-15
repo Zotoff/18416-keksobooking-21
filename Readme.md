@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Павел Зотов](https://up.htmlacademy.ru/javascript/21/user/18416).
-* Наставник: `Неизвестно`.
+* Наставник: `Евгений Фаллер`.
 
 ---
 
