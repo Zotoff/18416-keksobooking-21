@@ -1,10 +1,59 @@
 "use strict";
 (function () {
+  const FRAGMENT = document.createDocumentFragment();
+
+  const HOUSE_TITLES = [
+    `Уютный дом`,
+    `Классное бунгало`,
+    `Милый особняк`,
+    `Роскошный кексохаус`,
+    `Деревянная пагода`,
+    `Кексобукинг`,
+    `Милый отель`,
+    `Апартаменты у моря`,
+  ];
+
+  const HOUSE_TYPES = [
+    `palace`,
+    `flat`,
+    `house`,
+    `bungalow`
+  ];
+
+  const CHECKIN_CHECKOUT_TIMES = [
+    `12:00`,
+    `13:00`,
+    `14:00`
+  ];
+
+  const HOUSE_FEATURES = [
+    `wifi`,
+    `dishwasher`,
+    `parking`,
+    `washer`,
+    `elevator`,
+    `conditioner`
+  ];
+
+  const HOUSE_DESCRIPTIONS = [
+    `Good House`,
+    `Simple House with parking`,
+    `Awesome house`,
+    `Bad house`
+  ];
+
+  const HOUSE_PHOTOS = [
+    `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
+    `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
+    `http://o0.github.io/assets/images/tokyo/hotel3.jpg`
+  ];
+
+  const MAX_ANNOUNCEMENTS = 8;
+
   const announcements = [];
   const mapElement = document.querySelector(`.map`);
   const mapPinsElement = document.querySelector(`.map__pins`);
   const mapPinElement = document.querySelector(`#pin`).content;
-  const FRAGMENT = document.createDocumentFragment();
 
   const generateRandomValue = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
@@ -23,7 +72,7 @@
     const mapPinButton = mapPinTemplate.querySelector(`.map__pin`);
     const mapPinButtonImage = mapPinTemplate.querySelector(`img`);
 
-    mapPinButton.style.left = `${element.location.x + 25}px`;
+    mapPinButton.style.left = `${element.location.x}px`;
     mapPinButton.style.top = `${element.location.y + 35}px`;
     mapPinButtonImage.src = element.author.avatar;
     mapPinButtonImage.setAttribute(`alt`, element.offer.title);
@@ -38,78 +87,26 @@
   };
 
 
-  const houseTitles = [
-    `Уютный дом`,
-    `Классное бунгало`,
-    `Милый особняк`,
-    `Роскошный кексохаус`,
-    `Деревянная пагода`,
-    `Кексобукинг`,
-    `Милый отель`,
-    `Апартаменты у моря`,
-  ];
-
-  const houseTypes = [
-    `palace`,
-    `flat`,
-    `house`,
-    `bungalow`
-  ];
-
-  const checkinTimes = [
-    `12:00`,
-    `13:00`,
-    `14:00`
-  ];
-
-  const checkOutTimes = [
-    `12:00`,
-    `13:00`,
-    `14:00`
-  ];
-
-  const houseFeatures = [
-    `wifi`,
-    `dishwasher`,
-    `parking`,
-    `washer`,
-    `elevator`,
-    `conditioner`
-  ];
-
-  const houseDescriptions = [
-    `Good House`,
-    `Simple House with parking`,
-    `Awesome house`,
-    `Bad house`
-  ];
-
-  const housePhotos = [
-    `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
-    `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
-    `http://o0.github.io/assets/images/tokyo/hotel3.jpg`
-  ];
-
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < MAX_ANNOUNCEMENTS; i++) {
     const announcement = {
       author: {
-        avatar: `img/avatars/user0${generateRandomValue(1, 8)}.png`
+        avatar: `img/avatars/user` + (i < MAX_ANNOUNCEMENTS ? `0` : ``) + (i + 1) + `.png`
       },
       offer: {
-        title: houseTitles[generateRandomValue(0, houseTitles.length)],
+        title: HOUSE_TITLES[generateRandomValue(0, HOUSE_TITLES.length)],
         address: `${generateRandomValue(100, 450)}, ${generateRandomValue(0, 600)}`,
         price: generateRandomValue(0, 1000),
-        type: houseTypes[generateRandomValue(0, houseTypes.length)],
+        type: HOUSE_TYPES[generateRandomValue(0, HOUSE_TYPES.length)],
         rooms: generateRandomValue(1, 4),
         guests: generateRandomValue(1, 10),
-        checkin: checkinTimes[generateRandomValue(0, checkinTimes.length)],
-        checkout: checkOutTimes[generateRandomValue(0, checkOutTimes.length)],
-        features: generateRandomArray(houseFeatures, generateRandomValue(1, houseFeatures.length)),
-        description: houseDescriptions[generateRandomValue(0, houseDescriptions.length)],
-        photos: generateRandomArray(housePhotos, generateRandomValue(1, housePhotos.length))
+        checkin: CHECKIN_CHECKOUT_TIMES[generateRandomValue(0, CHECKIN_CHECKOUT_TIMES.length)],
+        checkout: CHECKIN_CHECKOUT_TIMES[generateRandomValue(0, CHECKIN_CHECKOUT_TIMES.length)],
+        features: generateRandomArray(HOUSE_FEATURES, generateRandomValue(1, HOUSE_FEATURES.length)),
+        description: HOUSE_DESCRIPTIONS[generateRandomValue(0, HOUSE_DESCRIPTIONS.length)],
+        photos: generateRandomArray(HOUSE_PHOTOS, generateRandomValue(1, HOUSE_PHOTOS.length))
       },
       location: {
-        x: generateRandomValue(0, 1200),
+        x: generateRandomValue(0, 1150),
         y: generateRandomValue(130, 630)
       }
     };
