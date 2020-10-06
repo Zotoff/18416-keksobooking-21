@@ -52,8 +52,10 @@
 
   const announcements = [];
   const mapElement = document.querySelector(`.map`);
+  const mapFiltersContainer = document.querySelector(`.map__filters-container`);
   const mapPinsElement = document.querySelector(`.map__pins`);
   const mapPinElement = document.querySelector(`#pin`).content;
+  const cardElement = document.querySelector(`#card`).content;
 
   const generateRandomValue = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
@@ -67,7 +69,19 @@
     return resultArray;
   };
 
-  const generateDOMelement = (element) => {
+  const checkUndefinedValue = (element, selector, cb) => {
+    if (!element) {
+      selector.classList.add(`hidden`);
+    } else {
+      cb();
+    }
+  };
+
+  const enterTextContent = (selector, content) => {
+    selector.textContent = content;
+  };
+
+  const generateMapPinElement = (element) => {
     const mapPinTemplate = mapPinElement.cloneNode(true);
     const mapPinButton = mapPinTemplate.querySelector(`.map__pin`);
     const mapPinButtonImage = mapPinTemplate.querySelector(`img`);
@@ -80,17 +94,100 @@
     return mapPinTemplate;
   };
 
+
+  const generateCardElement = (element) => {
+    const cardTemplate = cardElement.cloneNode(true);
+
+    const cardTitle = cardTemplate.querySelector(`.popup__title`);
+    const cardAddress = cardTemplate.querySelector(`.popup__text--address`);
+    const cardPrice = cardTemplate.querySelector(`.popup__text--price`);
+    const cardHouseType = cardTemplate.querySelector(`.popup__type`);
+    const cardHouseRoomsAndGuests = cardTemplate.querySelector(`.popup__text--capacity`);
+    const cardHouseCheckTime = cardTemplate.querySelector(`.popup__text--time`);
+    const cardHouseFeatures = cardTemplate.querySelector(`.popup__features`);
+    const cardHouseDescription = cardTemplate.querySelector(`.popup__description`);
+    const cardHousePhotosElement = cardTemplate.querySelector(`.popup__photos`);
+    const cardHousePhoto = cardTemplate.querySelector(`.popup__photos img`);
+    const cardHouseUserAvatar = cardTemplate.querySelector(`.popup__avatar`);
+
+    checkUndefinedValue(element.offer.title, cardTitle, () => {
+      enterTextContent(cardTitle, element.offer.title);
+    });
+    checkUndefinedValue(element.offer.address, cardAddress, () => {
+      enterTextContent(cardAddress, element.offer.address);
+    });
+    checkUndefinedValue(element.offer.price, cardPrice, () => {
+      enterTextContent(cardPrice, `${element.offer.price}₽/ночь`);
+    });
+    checkUndefinedValue(element.offer.rooms, cardHouseRoomsAndGuests, () => {
+      checkUndefinedValue(element.offer.guests, cardHouseRoomsAndGuests, () => {
+        enterTextContent(cardHouseRoomsAndGuests, `${element.offer.rooms} комнаты для ${element.offer.guests} гостей`);
+      });
+    });
+    checkUndefinedValue(element.offer.checkin, cardHouseCheckTime, () => {
+      checkUndefinedValue(element.offer.checkout, cardHouseCheckTime, () => {
+        enterTextContent(cardHouseCheckTime, `Заезд после ${element.offer.checkin}, выезд до ${element.offer.checkout}`);
+      });
+    });
+    checkUndefinedValue(element.offer.features, cardHouseFeatures, () => {
+      element.offer.features.forEach((feature) => {
+        cardHouseFeatures.textContent += ` ` + feature;
+      });
+    });
+    checkUndefinedValue(element.offer.description, cardHouseDescription, () => {
+      enterTextContent(cardHouseDescription, element.offer.description);
+    });
+    checkUndefinedValue(element.offer.photos, cardHousePhotosElement, () => {
+      cardHousePhotosElement.innerHTML = ``;
+      for (let i = 0; i < element.offer.photos.length; i++) {
+        const photoSrc = element.offer.photos[i];
+        const cardPhoto = cardHousePhoto.cloneNode(true);
+        cardPhoto.classList.add(`popup__photo`);
+        cardPhoto.setAttribute(`width`, `45`);
+        cardPhoto.setAttribute(`height`, `45`);
+        cardPhoto.setAttribute(`alt`, element.offer.title);
+        cardPhoto.src = photoSrc;
+        cardHousePhotosElement.appendChild(cardPhoto);
+      }
+    });
+    checkUndefinedValue(element.author.avatar, cardHouseUserAvatar, () => {
+      cardHouseUserAvatar.src = element.author.avatar;
+    });
+    checkUndefinedValue(element.offer.type, cardHouseType, () => {
+      switch (element.offer.type) {
+        case `palace`:
+          cardHouseType.textContent = `Дворец`;
+          break;
+        case `flat`:
+          cardHouseType.textContent = `Квартира`;
+          break;
+        case `house`:
+          cardHouseType.textContent = `Дом`;
+          break;
+        case `bungalow`:
+          cardHouseType.textContent = `Бунгало`;
+          break;
+      }
+    });
+    return cardTemplate;
+  };
+
   const fillDomWithPins = (data) => {
     for (let i = 0; i < data.length; i++) {
-      FRAGMENT.appendChild(generateDOMelement(data[i]));
+      FRAGMENT.appendChild(generateMapPinElement(data[i]));
     }
+  };
+
+  const fillDomWithAnnouncements = (data) => {
+    FRAGMENT.appendChild(generateCardElement(data));
+    mapElement.insertBefore(FRAGMENT, mapFiltersContainer);
   };
 
 
   for (let i = 0; i < MAX_ANNOUNCEMENTS; i++) {
     const announcement = {
       author: {
-        avatar: `img/avatars/user` + (i < MAX_ANNOUNCEMENTS ? `0` : ``) + (i + 1) + `.png`
+        avatar: `img/avatars/user0${i + 1}.png`
       },
       offer: {
         title: HOUSE_TITLES[generateRandomValue(0, HOUSE_TITLES.length)],
@@ -116,6 +213,7 @@
   mapElement.classList.remove(`.map--faded`);
 
   fillDomWithPins(announcements);
+  fillDomWithAnnouncements(announcements[0]);
 
   mapPinsElement.appendChild(FRAGMENT);
 })();
