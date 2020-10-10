@@ -50,12 +50,29 @@
 
   const MAX_ANNOUNCEMENTS = 8;
 
+  const ROUND_MAP_PIN_SIZE = 65;
+  const ACTIVE_MAP_PIN_SIZE = 65;
+  const ACTIVE_MAP_PIN_EDGE_HEIGHT = 20;
+
   const announcements = [];
   const mapElement = document.querySelector(`.map`);
   const mapFiltersContainer = document.querySelector(`.map__filters-container`);
   const mapPinsElement = document.querySelector(`.map__pins`);
   const mapPinElement = document.querySelector(`#pin`).content;
   const cardElement = document.querySelector(`#card`).content;
+  const mapFiltersForm = document.querySelector(`.map__filters`);
+  const mainPinElement = document.querySelector(`.map__pin--main`);
+  const adFormElement = document.querySelector(`.ad-form`);
+  const adFormElementFieldsets = adFormElement.querySelectorAll(`fieldset`);
+  const adFormAddress = adFormElement.querySelector(`#address`);
+  const adFormRoomNumber = adFormElement.querySelector(`#room_number`);
+  const adFormCapacity = adFormElement.querySelector(`#capacity`);
+
+  const mapPinInactiveX = document.querySelector(`.map__pin`).style.left;
+  const mapPinInactiveY = document.querySelector(`.map__pin`).style.top;
+
+  const mapPinActiveX = document.querySelector(`.map__pin`).style.left;
+  const mapPinActiveY = document.querySelector(`.map__pin`).style.top;
 
   const generateRandomValue = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
@@ -72,9 +89,56 @@
   const checkUndefinedValue = (element, selector, cb) => {
     if (!element) {
       selector.classList.add(`hidden`);
-    } else {
+    }
+    cb();
+  };
+
+  const removeSymbolsFromString = (str, symbols) => {
+    return str.substring(0, str.length - symbols);
+  };
+
+  const setMapActive = () => {
+    mapFiltersForm.removeAttribute(`disabled`);
+    adFormElementFieldsets.forEach((element) => {
+      element.removeAttribute(`disabled`);
+    });
+    adFormElement.classList.remove(`ad-form--disabled`);
+    mapElement.classList.remove(`map--faded`);
+
+    const mapPinActiveXCoord = removeSymbolsFromString(mapPinActiveX, 2);
+    const mapPinActiveYCoord = removeSymbolsFromString(mapPinActiveY, 2);
+    const mapPinActiveEdgeXCoord = calculateMapPinEdgeCoord(`x`, mapPinActiveXCoord, ACTIVE_MAP_PIN_SIZE);
+    const mapPinActiveEdgeYCoord = calculateMapPinEdgeCoord(`y`, mapPinActiveYCoord, ACTIVE_MAP_PIN_SIZE);
+
+    const edgePinCoordsMessage = `${mapPinActiveEdgeXCoord} ${mapPinActiveEdgeYCoord}`;
+    adFormAddress.value = edgePinCoordsMessage;
+  };
+
+  const checkMouseDownEvent = (evt, code, cb) => {
+    if (evt.button === code) {
       cb();
     }
+  };
+
+  const checkKeyDownEvent = (evt, key, cb) => {
+    if (evt.key === key) {
+      cb();
+    }
+  };
+
+  const calculateMapPinCenterCoord = (coord, pinSize) => {
+    const centerCoord = Math.floor(+coord + (pinSize / 2));
+    return centerCoord;
+  };
+
+  const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
+    let mapPinEdgeCoord = 0;
+    if (axis === `x`) {
+      mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
+    } else if (axis === `y`) {
+      mapPinEdgeCoord = Math.floor(+coord + pinSize + ACTIVE_MAP_PIN_EDGE_HEIGHT);
+    }
+    return mapPinEdgeCoord;
   };
 
   const enterTextContent = (selector, content) => {
@@ -210,10 +274,77 @@
     announcements.push(announcement);
   }
 
-  mapElement.classList.remove(`.map--faded`);
-
   fillDomWithPins(announcements);
   fillDomWithAnnouncements(announcements[0]);
 
   mapPinsElement.appendChild(FRAGMENT);
+
+  mapFiltersForm.setAttribute(`disabled`, `true`);
+  adFormElementFieldsets.forEach((element) => {
+    element.setAttribute(`disabled`, `true`);
+  });
+
+  if (mapElement.classList.contains(`map--faded`)) {
+    const mapPinInactiveXCoord = removeSymbolsFromString(mapPinInactiveX, 2);
+    const mapPinInactiveYCoord = removeSymbolsFromString(mapPinInactiveY, 2);
+    const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, ROUND_MAP_PIN_SIZE);
+    const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, ROUND_MAP_PIN_SIZE);
+    const coordMessage = `${mapPinXCenterCoord} ${mapPinYCenterCoord}`;
+    adFormAddress.value = coordMessage;
+  }
+
+  mainPinElement.addEventListener(`mousedown`, (evt) => {
+    checkMouseDownEvent(evt, 0, setMapActive);
+  });
+
+  mainPinElement.addEventListener(`keydown`, (evt) => {
+    checkKeyDownEvent(evt, `Enter`, setMapActive);
+  });
+
+  adFormRoomNumber.addEventListener(`change`, (evt) => {
+    const roomNumber = evt.target.value;
+    switch (roomNumber) {
+      case `3`:
+        adFormCapacity.addEventListener(`change`, (ev) => {
+          if (ev.target.value === `0`) {
+            adFormCapacity.setCustomValidity(`Вы выбрали неподходящую комнату`);
+          } else {
+            adFormCapacity.setCustomValidity(``);
+          }
+        });
+        break;
+      case `2`:
+        adFormCapacity.addEventListener(`change`, (ev) => {
+          if (ev.target.value === `3` || ev.target.value === `0`) {
+            adFormCapacity.setCustomValidity(`Вы выбрали неподходящую комнату`);
+          } else {
+            adFormCapacity.setCustomValidity(``);
+          }
+        });
+
+        break;
+      case `1`:
+        adFormCapacity.addEventListener(`change`, (ev) => {
+          if (ev.target.value === `3` || ev.target.value === `0` || ev.target.value === `2`) {
+            adFormCapacity.setCustomValidity(`Вы выбрали неподходящую комнату`);
+          } else {
+            adFormCapacity.setCustomValidity(``);
+          }
+        });
+
+        break;
+      case `100`:
+        adFormCapacity.addEventListener(`change`, (ev) => {
+          if (ev.target.value !== `0`) {
+            adFormCapacity.setCustomValidity(`Вы выбрали неподходящую комнату`);
+          } else {
+            adFormCapacity.setCustomValidity(``);
+          }
+        });
+        break;
+      default:
+        return true;
+    }
+  });
+
 })();
