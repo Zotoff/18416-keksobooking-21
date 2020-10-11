@@ -105,8 +105,6 @@
   const adFormCheckOut = adFormElement.querySelector(`#timeout`);
   const adFormRoom = adFormElement.querySelector(`#room_number`);
   const adFormCapacity = adFormElement.querySelector(`#capacity`);
-  const adFormRoomNumber = adFormElement.querySelector(`#room_number`).value;
-  const adFormCapacityNumber = adFormElement.querySelector(`#capacity`).value;
   const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
 
   const mapPinInactiveX = document.querySelector(`.map__pin`).style.left;
