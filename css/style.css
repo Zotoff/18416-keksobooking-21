@@ -1246,3 +1246,6 @@ fieldset {
 .hidden {
   display: none;
 }
+.input--error {
+  border: 1px solid red !important;
+}
