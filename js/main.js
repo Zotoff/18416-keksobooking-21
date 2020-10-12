@@ -66,7 +66,7 @@
   const MIN_PRICES = [`0`, `1000`, `5000`, `10000`];
   const TIMES_VALUES = [`12:00`, `13:00`, `14:00`];
 
-  const ERROR_MESSAGES = {
+  const ErrorMessages = {
     valueMissing: `Пожалуйста, заполните форму`,
     wrongRoom: `Вы выбрали количество мест, не соответствующее количеству гостей`,
     emptyItem: `Пожалуйста, заполните поле`,
@@ -157,7 +157,7 @@
 
     const edgePinCoordsMessage = `${mapPinActiveEdgeXCoord} ${mapPinActiveEdgeYCoord}`;
     adFormAddress.setAttribute(`value`, edgePinCoordsMessage);
-    adFormAddress.setAttribute(`disabled`, `true`);
+    adFormAddress.setAttribute(`readonly`, `readonly`);
 
     fillDomWithPins(announcements);
     fillDomWithAnnouncements(announcements[0]);
@@ -198,47 +198,47 @@
 
   const checkInputValidity = (item) => {
     if (item.validity.valueMissing) {
-      item.setCustomValidity(ERROR_MESSAGES.valueMissing);
+      item.setCustomValidity(ErrorMessages.valueMissing);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.wrongRoom) {
-      item.setCustomValidity(ERROR_MESSAGES.wrongRoom);
+      item.setCustomValidity(ErrorMessages.wrongRoom);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.emptyItem) {
-      item.setCustomValidity(ERROR_MESSAGES.emptyItem);
+      item.setCustomValidity(ErrorMessages.emptyItem);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.badInput) {
-      item.setCustomValidity(ERROR_MESSAGES.badInput);
+      item.setCustomValidity(ErrorMessages.badInput);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.patternMismatch) {
-      item.setCustomValidity(ERROR_MESSAGES.patternMismatch);
+      item.setCustomValidity(ErrorMessages.patternMismatch);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.rangeOverflow) {
-      item.setCustomValidity(ERROR_MESSAGES.rangeOverflow);
+      item.setCustomValidity(ErrorMessages.rangeOverflow);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.rangeUnderflow) {
-      item.setCustomValidity(ERROR_MESSAGES.rangeUnderflow);
+      item.setCustomValidity(ErrorMessages.rangeUnderflow);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.stepMismatch) {
-      item.setCustomValidity(ERROR_MESSAGES.stepMismatch);
+      item.setCustomValidity(ErrorMessages.stepMismatch);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.tooLong) {
-      item.setCustomValidity(ERROR_MESSAGES.tooLong);
+      item.setCustomValidity(ErrorMessages.tooLong);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.tooShort) {
-      item.setCustomValidity(ERROR_MESSAGES.tooShort);
+      item.setCustomValidity(ErrorMessages.tooShort);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else if (item.validity.typeMismatch) {
-      item.setCustomValidity(ERROR_MESSAGES.typeMismatch);
+      item.setCustomValidity(ErrorMessages.typeMismatch);
       makeRedBorder(item);
       item.parentNode.setAttribute(`valid`, `false`);
     } else {
@@ -297,63 +297,6 @@
     checkInputValidity(adFormPrice);
     checkInputValidity(adFormAddress);
   };
-
-  // const syncQuestWithRooms = (guest, room) => {
-  //   if (guest !== room) {
-  //     adFormCapacity.setCustomValidity(ERROR_MESSAGES.wrongRoom);
-  //     makeRedBorder(adFormCapacity);
-  //   } else {
-  //     adFormCapacity.setCustomValidity(``);
-  //     removeRedBorder(adFormCapacity);
-  //   }
-  //   adFormCapacity.addEventListener(`change`, (evt) => {
-  //     console.log(`Change`);
-  //     syncQuestWithRooms(guest, evt.target.value);
-  //   });
-  //   // const initialSelection = element.querySelector(`option[selected]`).value;
-  //   // const capacityInitialSelection = adFormCapacity.querySelector(`option[selected]`).value;
-  //   // if (initialSelection !== capacityInitialSelection) {
-  //   //   adFormCapacity.setCustomValidity(ERROR_MESSAGES.wrongRoom);
-  //   //   makeRedBorder(adFormCapacity);
-  //   // } else {
-  //   //   removeRedBorder(adFormCapacity);
-  //   // }
-  //   // adFormCapacity.addEventListener(`change`, (evt) => {
-  //   //   if (initialSelection !== evt.target.value) {
-  //   //     console.log(`firstWrong`);
-  //   //     adFormCapacity.setCustomValidity(ERROR_MESSAGES.wrongRoom);
-  //   //     makeRedBorder(adFormCapacity);
-  //   //   } else {
-  //   //     console.log(`firstCheck...`);
-  //   //     adFormCapacity.setCustomValidity(``);
-  //   //     removeRedBorder(adFormCapacity);
-  //   //     const newCurrent = evt.target.querySelector(`option[value="${evt.target.value}"]`);
-  //   //     checkQuestsValidity()
-  //   //   }
-  //   // });
-  //   // adFormRoomNumber.addEventListener(`change`, (evt) => {
-  //   //   const roomNumber = evt.target.value;
-  //   //   switch (roomNumber) {
-  //   //     case `1`:
-  //   //       adFormCapacity.addEventListener(`change`, (ev) => {
-  //   //         if (ev.target.value === `0`) {
-  //   //           adFormCapacity.setCustomValidity(`Вы выбрали неподходящую комнату`);
-  //   //           makeRedBorder(adFormCapacity);
-  //   //         } else {
-  //   //           adFormCapacity.setCustomValidity(``);
-  //   //           removeRedBorder(adFormCapacity);
-  //   //         }
-  //   //       });
-  //   //   }
-  //   // });
-  //   // adFormCapacity.addEventListener(`change`, (ev) => {
-  //   //   if (ev.target.value === `0`) {
-  //   //     adFormCapacity.setCustomValidity(`Вы выбрали неподходящую комнату`);
-  //   //   } else {
-  //   //     adFormCapacity.setCustomValidity(``);
-  //   //   }
-  //   // });
-  // };
 
   const generateMapPinElement = (element) => {
     const mapPinTemplate = mapPinElement.cloneNode(true);
