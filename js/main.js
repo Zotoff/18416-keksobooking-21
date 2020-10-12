@@ -48,7 +48,43 @@
     `http://o0.github.io/assets/images/tokyo/hotel3.jpg`
   ];
 
+  const GUESTS_VALUES = [
+    `1`,
+    `2`,
+    `3`,
+    `0`
+  ];
+
+  const ROOMS_VALUES = [
+    `1`,
+    `2`,
+    `3`,
+    `100`
+  ];
+
+  const TYPES_VALUES = [`bungalow`, `flat`, `house`, `palace`];
+  const MIN_PRICES = [`0`, `1000`, `5000`, `10000`];
+  const TIMES_VALUES = [`12:00`, `13:00`, `14:00`];
+
+  const ErrorMessages = {
+    valueMissing: `Пожалуйста, заполните форму`,
+    wrongRoom: `Вы выбрали количество мест, не соответствующее количеству гостей`,
+    emptyItem: `Пожалуйста, заполните поле`,
+    badInput: `Вы ввели неверный тип данных`,
+    patternMismatch: `Данные не соответствуют шаблону`,
+    rangeOverflow: `Превышено максимальное значение`,
+    rangeUnderflow: `Значение ниже минимального`,
+    stepMismatch: `Превышен шаг`,
+    tooLong: `Превышена максимальная длина`,
+    tooShort: `Количество введенных символов ниже минимального`,
+    typeMismatch: `Пожалуйста, проверьте правильность ввода`,
+  };
+
   const MAX_ANNOUNCEMENTS = 8;
+
+  const ROUND_MAP_PIN_SIZE = 65;
+  const ACTIVE_MAP_PIN_SIZE = 65;
+  const ACTIVE_MAP_PIN_EDGE_HEIGHT = 20;
 
   const announcements = [];
   const mapElement = document.querySelector(`.map`);
@@ -56,6 +92,26 @@
   const mapPinsElement = document.querySelector(`.map__pins`);
   const mapPinElement = document.querySelector(`#pin`).content;
   const cardElement = document.querySelector(`#card`).content;
+  const mapFiltersForm = document.querySelector(`.map__filters`);
+  const mainPinElement = document.querySelector(`.map__pin--main`);
+
+  const adFormElement = document.querySelector(`.ad-form`);
+  const adFormElementFieldsets = adFormElement.querySelectorAll(`fieldset`);
+  const adFormTitle = adFormElement.querySelector(`#title`);
+  const adFormType = adFormElement.querySelector(`#type`);
+  const adFormPrice = adFormElement.querySelector(`#price`);
+  const adFormAddress = adFormElement.querySelector(`#address`);
+  const adFormCheckIn = adFormElement.querySelector(`#timein`);
+  const adFormCheckOut = adFormElement.querySelector(`#timeout`);
+  const adFormRoom = adFormElement.querySelector(`#room_number`);
+  const adFormCapacity = adFormElement.querySelector(`#capacity`);
+  const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
+
+  const mapPinInactiveX = document.querySelector(`.map__pin`).style.left;
+  const mapPinInactiveY = document.querySelector(`.map__pin`).style.top;
+
+  const mapPinActiveX = document.querySelector(`.map__pin`).style.left;
+  const mapPinActiveY = document.querySelector(`.map__pin`).style.top;
 
   const generateRandomValue = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
@@ -69,16 +125,177 @@
     return resultArray;
   };
 
+  const syncFields = (firstField, secondField, firstValues, secondValues, syncFieldsCallBack) => {
+    const currentIndex = firstValues.indexOf(firstField.value);
+    syncFieldsCallBack(secondField, secondValues[currentIndex]);
+  };
+
   const checkUndefinedValue = (element, selector, cb) => {
     if (!element) {
       selector.classList.add(`hidden`);
-    } else {
+    }
+    cb();
+  };
+
+
+  const removeSymbolsFromString = (str, symbols) => {
+    return str.substring(0, str.length - symbols);
+  };
+
+  const setMapActive = () => {
+    mapFiltersForm.removeAttribute(`disabled`);
+    adFormElementFieldsets.forEach((element) => {
+      element.removeAttribute(`disabled`);
+    });
+    adFormElement.classList.remove(`ad-form--disabled`);
+    mapElement.classList.remove(`map--faded`);
+
+    const mapPinActiveXCoord = removeSymbolsFromString(mapPinActiveX, 2);
+    const mapPinActiveYCoord = removeSymbolsFromString(mapPinActiveY, 2);
+    const mapPinActiveEdgeXCoord = calculateMapPinEdgeCoord(`x`, mapPinActiveXCoord, ACTIVE_MAP_PIN_SIZE);
+    const mapPinActiveEdgeYCoord = calculateMapPinEdgeCoord(`y`, mapPinActiveYCoord, ACTIVE_MAP_PIN_SIZE);
+
+    const edgePinCoordsMessage = `${mapPinActiveEdgeXCoord} ${mapPinActiveEdgeYCoord}`;
+    adFormAddress.setAttribute(`value`, edgePinCoordsMessage);
+    adFormAddress.setAttribute(`readonly`, `readonly`);
+
+    fillDomWithPins(announcements);
+    fillDomWithAnnouncements(announcements[0]);
+
+    activateForm();
+  };
+
+  const checkMouseDownEvent = (evt, code, cb) => {
+    if (evt.button === code) {
       cb();
     }
   };
 
+  const checkKeyDownEvent = (evt, key, cb) => {
+    if (evt.key === key) {
+      cb();
+    }
+  };
+
+  const calculateMapPinCenterCoord = (coord, pinSize) => {
+    const centerCoord = Math.floor(+coord + (pinSize / 2));
+    return centerCoord;
+  };
+
+  const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
+    let mapPinEdgeCoord = 0;
+    if (axis === `x`) {
+      mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
+    } else if (axis === `y`) {
+      mapPinEdgeCoord = Math.floor(+coord + pinSize + ACTIVE_MAP_PIN_EDGE_HEIGHT);
+    }
+    return mapPinEdgeCoord;
+  };
+
   const enterTextContent = (selector, content) => {
     selector.textContent = content;
+  };
+
+  const checkInputValidity = (item) => {
+    if (item.validity.valueMissing) {
+      item.setCustomValidity(ErrorMessages.valueMissing);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.wrongRoom) {
+      item.setCustomValidity(ErrorMessages.wrongRoom);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.emptyItem) {
+      item.setCustomValidity(ErrorMessages.emptyItem);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.badInput) {
+      item.setCustomValidity(ErrorMessages.badInput);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.patternMismatch) {
+      item.setCustomValidity(ErrorMessages.patternMismatch);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.rangeOverflow) {
+      item.setCustomValidity(ErrorMessages.rangeOverflow);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.rangeUnderflow) {
+      item.setCustomValidity(ErrorMessages.rangeUnderflow);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.stepMismatch) {
+      item.setCustomValidity(ErrorMessages.stepMismatch);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.tooLong) {
+      item.setCustomValidity(ErrorMessages.tooLong);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.tooShort) {
+      item.setCustomValidity(ErrorMessages.tooShort);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else if (item.validity.typeMismatch) {
+      item.setCustomValidity(ErrorMessages.typeMismatch);
+      makeRedBorder(item);
+      item.parentNode.setAttribute(`valid`, `false`);
+    } else {
+      removeRedBorder(item);
+      item.setCustomValidity(``);
+      item.parentNode.setAttribute(`valid`, `true`);
+    }
+  };
+
+  const makeRedBorder = (item) => {
+    item.classList.add(`input--error`);
+  };
+  const removeRedBorder = (item) => {
+    item.classList.remove(`input--error`);
+  };
+
+  const syncValue = (element, value) => {
+    element.value = value;
+  };
+
+  const syncValueWithMin = (element, value) => {
+    element.min = value;
+    element.placeholder = value;
+  };
+
+  const syncGuestWithRooms = (guestField, guestValue) => {
+    guestField.value = guestValue;
+    const currentValue = guestField.value;
+
+    Array.from(guestField).forEach((option) => {
+      option.disabled = (currentValue === `0`) ? (option.value !== `0`) : (option.value > currentValue || option.value === `0`);
+    });
+  };
+
+  syncFields(adFormRoom, adFormCapacity, ROOMS_VALUES, GUESTS_VALUES, syncGuestWithRooms);
+  syncFields(adFormType, adFormPrice, TYPES_VALUES, MIN_PRICES, syncValueWithMin);
+  syncFields(adFormCheckIn, adFormCheckOut, TIMES_VALUES, TIMES_VALUES, syncValue);
+
+  const activateForm = () => {
+    syncFields(adFormRoom, adFormCapacity, ROOMS_VALUES, GUESTS_VALUES, syncGuestWithRooms);
+    syncFields(adFormType, adFormPrice, TYPES_VALUES, MIN_PRICES, syncValueWithMin);
+    syncFields(adFormCheckIn, adFormCheckOut, TIMES_VALUES, TIMES_VALUES, syncValue);
+    adFormRoom.addEventListener(`change`, () => {
+      syncFields(adFormRoom, adFormCapacity, ROOMS_VALUES, GUESTS_VALUES, syncGuestWithRooms);
+    });
+    adFormType.addEventListener(`change`, () => {
+      syncFields(adFormType, adFormPrice, TYPES_VALUES, MIN_PRICES, syncValueWithMin);
+    });
+    adFormCheckIn.addEventListener(`change`, () => {
+      syncFields(adFormCheckIn, adFormCheckOut, TIMES_VALUES, TIMES_VALUES, syncValue);
+    });
+  };
+
+  const interactWithForm = () => {
+    checkInputValidity(adFormTitle);
+    checkInputValidity(adFormPrice);
+    checkInputValidity(adFormAddress);
   };
 
   const generateMapPinElement = (element) => {
@@ -210,10 +427,37 @@
     announcements.push(announcement);
   }
 
-  mapElement.classList.remove(`.map--faded`);
-
-  fillDomWithPins(announcements);
-  fillDomWithAnnouncements(announcements[0]);
-
   mapPinsElement.appendChild(FRAGMENT);
+
+  mapFiltersForm.setAttribute(`disabled`, `true`);
+  adFormElementFieldsets.forEach((element) => {
+    element.setAttribute(`disabled`, `true`);
+  });
+
+  if (mapElement.classList.contains(`map--faded`)) {
+    const mapPinInactiveXCoord = removeSymbolsFromString(mapPinInactiveX, 2);
+    const mapPinInactiveYCoord = removeSymbolsFromString(mapPinInactiveY, 2);
+    const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, ROUND_MAP_PIN_SIZE);
+    const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, ROUND_MAP_PIN_SIZE);
+    const coordMessage = `${mapPinXCenterCoord} ${mapPinYCenterCoord}`;
+    adFormAddress.setAttribute(`value`, coordMessage);
+  }
+
+  mainPinElement.addEventListener(`mousedown`, (evt) => {
+    checkMouseDownEvent(evt, 0, setMapActive);
+  });
+
+  mainPinElement.addEventListener(`keydown`, (evt) => {
+    checkKeyDownEvent(evt, `Enter`, setMapActive);
+  });
+
+  adFormSubmitBtn.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    activateForm();
+    interactWithForm();
+    const fieldSets = adFormElement.querySelectorAll(`fieldset[valid=false]`);
+    if (fieldSets.length === 0) {
+      adFormElement.submit();
+    }
+  });
 })();
