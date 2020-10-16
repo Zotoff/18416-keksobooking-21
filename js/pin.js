@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-  const FRAGMENT = window.util.fragment;
+  const FRAGMENT = window.utils.fragment;
   const mapPinsElement = document.querySelector(`.map__pins`);
   const mapPinElement = document.querySelector(`#pin`).content;
   const mainPinElement = document.querySelector(`.map__pin--main`);
@@ -14,8 +14,8 @@
   };
 
   window.pin = {
-    setupPins() {
-      const announcements = window.announcements;
+    setupPins(data) {
+      const announcements = data;
       const generateMapPinElement = (element) => {
         const mapPinTemplate = mapPinElement.cloneNode(true);
         const mapPinButton = mapPinTemplate.querySelector(`.map__pin`);
@@ -28,32 +28,31 @@
 
         return mapPinTemplate;
       };
-      const fillDomWithPins = (data) => {
-        for (let i = 0; i < data.length; i++) {
-          FRAGMENT.appendChild(generateMapPinElement(data[i]));
+      const fillDomWithPins = (pins) => {
+        for (let item of pins) {
+          FRAGMENT.appendChild(generateMapPinElement(item));
         }
         mapPinsElement.appendChild(FRAGMENT);
       };
-      const enterCoordinatesToAddress = () => {
-        if (window.map.mapSelector.classList.contains(`map--faded`)) {
-          const mapPinInactiveXCoord = window.util.removeSymbolsFromString(mapPinInactiveX, 2);
-          const mapPinInactiveYCoord = window.util.removeSymbolsFromString(mapPinInactiveY, 2);
-          const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, window.data.ROUND_MAP_PIN_SIZE);
-          const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, window.data.ROUND_MAP_PIN_SIZE);
-          const coordMessage = `${mapPinXCenterCoord} ${mapPinYCenterCoord}`;
-          window.form.adFormAddress.setAttribute(`value`, coordMessage);
-        }
-      };
       fillDomWithPins(announcements);
-      enterCoordinatesToAddress();
+    },
+    initiatePins() {
+      if (window.map.mapSelector.classList.contains(`map--faded`)) {
+        const mapPinInactiveXCoord = window.utils.removeSymbolsFromString(mapPinInactiveX, 2);
+        const mapPinInactiveYCoord = window.utils.removeSymbolsFromString(mapPinInactiveY, 2);
+        const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, window.data.ROUND_MAP_PIN_SIZE);
+        const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, window.data.ROUND_MAP_PIN_SIZE);
+        const coordMessage = `${mapPinXCenterCoord} ${mapPinYCenterCoord}`;
+        window.form.adFormAddress.setAttribute(`value`, coordMessage);
+      }
     },
     handlePinEvents() {
       mainPinElement.addEventListener(`mousedown`, (evt) => {
-        window.util.checkMouseDownEvent(evt, 0, window.map.setMapActive);
+        window.utils.checkMouseDownEvent(evt, 0, window.map.setMapActive);
       });
 
       mainPinElement.addEventListener(`keydown`, (evt) => {
-        window.util.checkKeyDownEvent(evt, `Enter`, window.map.setMapActive);
+        window.utils.checkKeyDownEvent(evt, `Enter`, window.map.setMapActive);
       });
     }
   };

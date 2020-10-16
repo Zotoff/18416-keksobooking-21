@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-  window.util = {
+  window.utils = {
     fragment: document.createDocumentFragment(),
     generateRandomValue(min, max) {
       return Math.floor(Math.random() * (max - min) + min);

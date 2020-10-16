@@ -2,6 +2,7 @@
 
 (function () {
   const mapFiltersForm = document.querySelector(`.map__filters`);
+  const mapFiltersContainerElement = document.querySelector(`.map__filters-container`);
   const mapPinActiveX = document.querySelector(`.map__pin`).style.left;
   const mapPinActiveY = document.querySelector(`.map__pin`).style.top;
   const mapElement = document.querySelector(`.map`);
@@ -18,6 +19,7 @@
 
   window.map = {
     mapSelector: mapElement,
+    mapFiltersContainer: mapFiltersContainerElement,
     initialSetup() {
       mapElement.classList.add(`map--faded`);
       mapFiltersForm.setAttribute(`disabled`, `true`);
@@ -30,23 +32,20 @@
       window.form.adFormElementFieldsets.forEach((element) => {
         element.removeAttribute(`disabled`);
       });
-      window.form.adFormSelector.classList.remove(`ad-form--disabled`);
+      window.form.adFormElement.classList.remove(`ad-form--disabled`);
       mapElement.classList.remove(`map--faded`);
 
-      const mapPinActiveXCoord = window.util.removeSymbolsFromString(mapPinActiveX, 2);
-      const mapPinActiveYCoord = window.util.removeSymbolsFromString(mapPinActiveY, 2);
+      const mapPinActiveXCoord = window.utils.removeSymbolsFromString(mapPinActiveX, 2);
+      const mapPinActiveYCoord = window.utils.removeSymbolsFromString(mapPinActiveY, 2);
       const mapPinActiveEdgeXCoord = calculateMapPinEdgeCoord(`x`, mapPinActiveXCoord, window.data.ACTIVE_MAP_PIN_SIZE);
       const mapPinActiveEdgeYCoord = calculateMapPinEdgeCoord(`y`, mapPinActiveYCoord, window.data.ACTIVE_MAP_PIN_SIZE);
 
       const edgePinCoordsMessage = `${mapPinActiveEdgeXCoord} ${mapPinActiveEdgeYCoord}`;
       window.form.adFormAddress.setAttribute(`value`, edgePinCoordsMessage);
       window.form.adFormAddress.setAttribute(`readonly`, `readonly`);
-
-      window.pin.setupPins();
-      window.card.fillDomWithAnnouncements(window.announcements[0]);
+      window.pin.setupPins(window.card.announcements);
+      window.card.fillDomWithAnnouncements(window.card.announcements);
       window.card.handleCardEvents();
-      window.form.activateForm();
-      window.form.interactWithForm();
       window.form.submitForm();
     },
   };

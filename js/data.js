@@ -58,7 +58,7 @@
       `100`
     ],
     ErrorMessages: {
-      valueMissing: `Пожалуйста, заполните форму`,
+      valueMissing: `Пожалуйста, заполните форму!`,
       wrongRoom: `Вы выбрали количество мест, не соответствующее количеству гостей`,
       emptyItem: `Пожалуйста, заполните поле`,
       badInput: `Вы ввели неверный тип данных`,
@@ -79,6 +79,8 @@
     MAX_ANNOUNCEMENTS: 8,
     ROUND_MAP_PIN_SIZE: 65,
     ACTIVE_MAP_PIN_SIZE: 65,
-    ACTIVE_MAP_PIN_EDGE_HEIGHT: 20
+    ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
+    TIMEOUT_IN_MS: 10000,
+    LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`
   };
 })();
