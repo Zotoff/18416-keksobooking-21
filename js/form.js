@@ -74,11 +74,6 @@
       item.parentNode.setAttribute(`valid`, `true`);
     }
   };
-  const interactWithForm = () => {
-    checkInputValidity(adFormTitle);
-    checkInputValidity(adFormPrice);
-    checkInputValidity(adFormAddressElement);
-  };
 
   window.form = {
     adFormElement,
@@ -101,11 +96,27 @@
         window.utils.syncFields(adFormCheckOut, adFormCheckIn, window.data.TIMES_VALUES, window.data.TIMES_VALUES, window.utils.syncValue);
       });
     },
+    checkFormValidity() {
+      checkInputValidity(adFormTitle);
+      checkInputValidity(adFormPrice);
+      checkInputValidity(adFormAddressElement);
+    },
+    interactWithForm() {
+      checkInputValidity(adFormTitle);
+      checkInputValidity(adFormPrice);
+      checkInputValidity(adFormCapacity);
+      adFormTitle.addEventListener(`input`, (evt) => {
+        checkInputValidity(evt.target);
+      });
+      adFormPrice.addEventListener(`input`, (evt) => {
+        checkInputValidity(evt.target);
+      });
+    },
     submitForm() {
       adFormSubmitBtn.addEventListener(`click`, (evt) => {
         evt.preventDefault();
         this.activateForm();
-        interactWithForm();
+        this.checkFormValidity();
         const fieldSets = adFormElement.querySelectorAll(`fieldset[valid=false]`);
         if (!fieldSets.length) {
           adFormElement.submit();

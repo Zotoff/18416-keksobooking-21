@@ -2,46 +2,6 @@
 
 (function () {
   window.data = {
-    HOUSE_TITLES: [
-      `Уютный дом`,
-      `Классное бунгало`,
-      `Милый особняк`,
-      `Роскошный кексохаус`,
-      `Деревянная пагода`,
-      `Кексобукинг`,
-      `Милый отель`,
-      `Апартаменты у моря`,
-    ],
-    HOUSE_TYPES: [
-      `palace`,
-      `flat`,
-      `house`,
-      `bungalow`
-    ],
-    CHECKIN_CHECKOUT_TIMES: [
-      `12:00`,
-      `13:00`,
-      `14:00`
-    ],
-    HOUSE_FEATURES: [
-      `wifi`,
-      `dishwasher`,
-      `parking`,
-      `washer`,
-      `elevator`,
-      `conditioner`
-    ],
-    HOUSE_DESCRIPTIONS: [
-      `Good House`,
-      `Simple House with parking`,
-      `Awesome house`,
-      `Bad house`
-    ],
-    HOUSE_PHOTOS: [
-      `http://o0.github.io/assets/images/tokyo/hotel1.jpg`,
-      `http://o0.github.io/assets/images/tokyo/hotel2.jpg`,
-      `http://o0.github.io/assets/images/tokyo/hotel3.jpg`
-    ],
     TYPES_VALUES: [`bungalow`, `flat`, `house`, `palace`],
     MIN_PRICES: [`0`, `1000`, `5000`, `10000`],
     TIMES_VALUES: [`12:00`, `13:00`, `14:00`],
@@ -69,6 +29,13 @@
       tooLong: `Превышена максимальная длина`,
       tooShort: `Количество введенных символов ниже минимального`,
       typeMismatch: `Пожалуйста, проверьте правильность ввода`,
+    },
+    ResponseStatuses: {
+      successResponse: 200,
+      wrongResponse: 400,
+      unauthorizedResponse: 401,
+      notFoundResponse: 404,
+      internalErrorResponse: 500
     },
     OfferTypes: {
       Palace: `palace`,

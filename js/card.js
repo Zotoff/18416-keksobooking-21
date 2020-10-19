@@ -2,50 +2,13 @@
 
 (function () {
   window.card = {
-    announcements: [],
-    setupAnnouncements() {
-      const fillAnnouncements = (data) => {
-        for (let i = 0; i < data.length; i++) {
-          const announcement = {
-            author: {
-              avatar: data[i].author.avatar
-            },
-            offer: {
-              title: data[i].offer.title,
-              address: data[i].offer.address,
-              price: data[i].offer.price,
-              type: data[i].offer.type,
-              rooms: data[i].offer.rooms,
-              guests: data[i].offer.guests,
-              checkin: data[i].offer.checkin,
-              checkout: data[i].offer.checkout,
-              features: data[i].offer.features,
-              description: data[i].offer.description,
-              photos: data[i].offer.photos
-            },
-            location: {
-              x: data[i].location.x,
-              y: data[i].location.y
-            }
-          };
-          this.announcements.push(announcement);
-        }
-      };
-      const onSuccess = (data) => {
-        fillAnnouncements(data);
-      };
-      const onError = (message) => {
-        const noticeElement = document.querySelector(`.notice`);
-        noticeElement.insertAdjacentHTML(`beforebegin`, `<div class="error-message"><p>${message}</p></div>`);
-      };
-      window.network.load(onSuccess, onError);
-    },
     fillDomWithAnnouncements(data) {
       const FRAGMENT = window.utils.fragment;
       const cardElement = document.querySelector(`#card`).content;
 
       const generateCardElement = (element) => {
         const cardTemplate = cardElement.cloneNode(true);
+        const cardMain = cardTemplate.querySelector(`.popup`);
         const cardTitle = cardTemplate.querySelector(`.popup__title`);
         const cardAddress = cardTemplate.querySelector(`.popup__text--address`);
         const cardPrice = cardTemplate.querySelector(`.popup__text--price`);
@@ -58,6 +21,7 @@
         const cardHousePhoto = cardTemplate.querySelector(`.popup__photos img`);
         const cardHouseUserAvatar = cardTemplate.querySelector(`.popup__avatar`);
 
+        cardMain.classList.add(`hidden`);
         window.utils.checkUndefinedValue(element.offer.title, cardTitle, () => {
           window.utils.enterTextContent(cardTitle, element.offer.title);
         });
@@ -133,7 +97,7 @@
           element.classList.add(`hidden`);
         });
       });
-    }
+    },
   };
 
 })();

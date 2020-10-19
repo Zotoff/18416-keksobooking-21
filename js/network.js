@@ -7,17 +7,20 @@
     xhr.addEventListener(`load`, () => {
       let error;
       switch (xhr.status) {
-        case 200:
+        case window.data.ResponseStatuses.successResponse:
           successHandler(xhr.response);
           break;
-        case 400:
+        case window.data.ResponseStatuses.wrongResponse:
           error = `Неверный запрос`;
           break;
-        case 401:
+        case window.data.ResponseStatuses.unauthorizedResponse:
           error = `Пользователь не авторизован`;
           break;
-        case 404:
+        case window.data.ResponseStatuses.notFoundResponse:
           error = `Ничего не найдено`;
+          break;
+        case window.data.ResponseStatuses.internalErrorResponse:
+          error = `Произошла ошибка сервера`;
           break;
         default:
           error = `Статус ответа: ${xhr.status} | ${xhr.statusText}`;
