@@ -8,9 +8,6 @@
   const mapPinInactiveX = document.querySelector(`.map__pin`).style.left;
   const mapPinInactiveY = document.querySelector(`.map__pin`).style.top;
 
-  const mapPins = document.querySelectorAll(`.map__pin`);
-  const mapCards = document.querySelectorAll(`.map__card`);
-
   const calculateMapPinCenterCoord = (coord, pinSize) => {
     const centerCoord = Math.floor(+coord + (pinSize / 2));
     return centerCoord;
