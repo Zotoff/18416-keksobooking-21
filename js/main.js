@@ -1,6 +1,6 @@
 "use strict";
 (function () {
   window.map.initialSetup();
-  window.card.setupAnnouncements();
-  window.pin.handlePinEvents();
+  window.pin.initiatePins();
+  window.form.activateForm();
 })();

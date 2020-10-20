@@ -2,44 +2,13 @@
 
 (function () {
   window.card = {
-    setupAnnouncements() {
-      const announcements = [];
-      const fillAnnouncements = () => {
-        for (let i = 0; i < window.data.MAX_ANNOUNCEMENTS; i++) {
-          const announcement = {
-            author: {
-              avatar: `img/avatars/user0${i + 1}.png`
-            },
-            offer: {
-              title: window.data.HOUSE_TITLES[window.util.generateRandomValue(0, window.data.HOUSE_TITLES.length)],
-              address: `${window.util.generateRandomValue(100, 450)}, ${window.util.generateRandomValue(0, 600)}`,
-              price: window.util.generateRandomValue(0, 1000),
-              type: window.data.HOUSE_TYPES[window.util.generateRandomValue(0, window.data.HOUSE_TYPES.length)],
-              rooms: window.util.generateRandomValue(1, 4),
-              guests: window.util.generateRandomValue(1, 10),
-              checkin: window.data.CHECKIN_CHECKOUT_TIMES[window.util.generateRandomValue(0, window.data.CHECKIN_CHECKOUT_TIMES.length)],
-              checkout: window.data.CHECKIN_CHECKOUT_TIMES[window.util.generateRandomValue(0, window.data.CHECKIN_CHECKOUT_TIMES.length)],
-              features: window.util.generateRandomArray(window.data.HOUSE_FEATURES, window.util.generateRandomValue(1, window.data.HOUSE_FEATURES.length)),
-              description: window.data.HOUSE_DESCRIPTIONS[window.util.generateRandomValue(0, window.data.HOUSE_DESCRIPTIONS.length)],
-              photos: window.util.generateRandomArray(window.data.HOUSE_PHOTOS, window.util.generateRandomValue(1, window.data.HOUSE_PHOTOS.length))
-            },
-            location: {
-              x: window.util.generateRandomValue(0, 1150),
-              y: window.util.generateRandomValue(130, 630)
-            }
-          };
-          announcements.push(announcement);
-        }
-        window.announcements = announcements;
-      };
-      fillAnnouncements();
-    },
     fillDomWithAnnouncements(data) {
-      const FRAGMENT = window.util.fragment;
+      const FRAGMENT = window.utils.fragment;
       const cardElement = document.querySelector(`#card`).content;
 
       const generateCardElement = (element) => {
         const cardTemplate = cardElement.cloneNode(true);
+        const cardMain = cardTemplate.querySelector(`.popup`);
         const cardTitle = cardTemplate.querySelector(`.popup__title`);
         const cardAddress = cardTemplate.querySelector(`.popup__text--address`);
         const cardPrice = cardTemplate.querySelector(`.popup__text--price`);
@@ -52,34 +21,35 @@
         const cardHousePhoto = cardTemplate.querySelector(`.popup__photos img`);
         const cardHouseUserAvatar = cardTemplate.querySelector(`.popup__avatar`);
 
-        window.util.checkUndefinedValue(element.offer.title, cardTitle, () => {
-          window.util.enterTextContent(cardTitle, element.offer.title);
+        cardMain.classList.add(`hidden`);
+        window.utils.checkUndefinedValue(element.offer.title, cardTitle, () => {
+          window.utils.enterTextContent(cardTitle, element.offer.title);
         });
-        window.util.checkUndefinedValue(element.offer.address, cardAddress, () => {
-          window.util.enterTextContent(cardAddress, element.offer.address);
+        window.utils.checkUndefinedValue(element.offer.address, cardAddress, () => {
+          window.utils.enterTextContent(cardAddress, element.offer.address);
         });
-        window.util.checkUndefinedValue(element.offer.price, cardPrice, () => {
-          window.util.enterTextContent(cardPrice, `${element.offer.price}₽/ночь`);
+        window.utils.checkUndefinedValue(element.offer.price, cardPrice, () => {
+          window.utils.enterTextContent(cardPrice, `${element.offer.price}₽/ночь`);
         });
-        window.util.checkUndefinedValue(element.offer.rooms, cardHouseRoomsAndGuests, () => {
-          window.util.checkUndefinedValue(element.offer.guests, cardHouseRoomsAndGuests, () => {
-            window.util.enterTextContent(cardHouseRoomsAndGuests, `${element.offer.rooms} комнаты для ${element.offer.guests} гостей`);
+        window.utils.checkUndefinedValue(element.offer.rooms, cardHouseRoomsAndGuests, () => {
+          window.utils.checkUndefinedValue(element.offer.guests, cardHouseRoomsAndGuests, () => {
+            window.utils.enterTextContent(cardHouseRoomsAndGuests, `${element.offer.rooms} комнаты для ${element.offer.guests} гостей`);
           });
         });
-        window.util.checkUndefinedValue(element.offer.checkin, cardHouseCheckTime, () => {
-          window.util.checkUndefinedValue(element.offer.checkout, cardHouseCheckTime, () => {
-            window.util.enterTextContent(cardHouseCheckTime, `Заезд после ${element.offer.checkin}, выезд до ${element.offer.checkout}`);
+        window.utils.checkUndefinedValue(element.offer.checkin, cardHouseCheckTime, () => {
+          window.utils.checkUndefinedValue(element.offer.checkout, cardHouseCheckTime, () => {
+            window.utils.enterTextContent(cardHouseCheckTime, `Заезд после ${element.offer.checkin}, выезд до ${element.offer.checkout}`);
           });
         });
-        window.util.checkUndefinedValue(element.offer.features, cardHouseFeatures, () => {
+        window.utils.checkUndefinedValue(element.offer.features, cardHouseFeatures, () => {
           element.offer.features.forEach((feature) => {
             cardHouseFeatures.textContent += ` ` + feature;
           });
         });
-        window.util.checkUndefinedValue(element.offer.description, cardHouseDescription, () => {
-          window.util.enterTextContent(cardHouseDescription, element.offer.description);
+        window.utils.checkUndefinedValue(element.offer.description, cardHouseDescription, () => {
+          window.utils.enterTextContent(cardHouseDescription, element.offer.description);
         });
-        window.util.checkUndefinedValue(element.offer.photos, cardHousePhotosElement, () => {
+        window.utils.checkUndefinedValue(element.offer.photos, cardHousePhotosElement, () => {
           cardHousePhotosElement.innerHTML = ``;
           for (let i = 0; i < element.offer.photos.length; i++) {
             const photoSrc = element.offer.photos[i];
@@ -92,10 +62,10 @@
             cardHousePhotosElement.appendChild(cardPhoto);
           }
         });
-        window.util.checkUndefinedValue(element.author.avatar, cardHouseUserAvatar, () => {
+        window.utils.checkUndefinedValue(element.author.avatar, cardHouseUserAvatar, () => {
           cardHouseUserAvatar.src = element.author.avatar;
         });
-        window.util.checkUndefinedValue(element.offer.type, cardHouseType, () => {
+        window.utils.checkUndefinedValue(element.offer.type, cardHouseType, () => {
           switch (element.offer.type) {
             case window.data.OfferTypes.Palace:
               cardHouseType.textContent = `Дворец`;
@@ -113,17 +83,21 @@
         });
         return cardTemplate;
       };
-      FRAGMENT.appendChild(generateCardElement(data));
+      for (let item of data) {
+        FRAGMENT.appendChild(generateCardElement(item));
+      }
       window.map.mapSelector.insertBefore(FRAGMENT, window.map.mapFiltersContainer);
     },
     handleCardEvents() {
-      const popUpElement = document.querySelector(`.popup`);
-      const popUpCloseBtn = popUpElement.querySelector(`.popup__close`);
-      popUpCloseBtn.addEventListener(`click`, (evt) => {
-        evt.preventDefault();
-        popUpElement.classList.add(`hidden`);
+      const popUpElements = document.querySelectorAll(`.popup`);
+      popUpElements.forEach((element) => {
+        const popUpCloseBtn = element.querySelector(`.popup__close`);
+        popUpCloseBtn.addEventListener(`click`, (evt) => {
+          evt.preventDefault();
+          element.classList.add(`hidden`);
+        });
       });
-    }
+    },
   };
 
 })();
