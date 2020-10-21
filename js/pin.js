@@ -77,6 +77,7 @@
         return true;
       }
       pin.classList.add(`hidden`);
+      return true;
     });
   };
 
