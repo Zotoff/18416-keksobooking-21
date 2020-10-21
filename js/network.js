@@ -7,20 +7,20 @@
     xhr.addEventListener(`load`, () => {
       let error;
       switch (xhr.status) {
-        case window.data.ResponseStatuses.successResponse:
+        case window.constants.ResponseStatuses.successResponse:
           successHandler(xhr.response);
           break;
-        case window.data.ResponseStatuses.wrongResponse:
-          error = `Неверный запрос`;
+        case window.constants.ResponseStatuses.wrongResponse:
+          error = window.constants.NetworkErrorMessages.wrongResponse;
           break;
-        case window.data.ResponseStatuses.unauthorizedResponse:
-          error = `Пользователь не авторизован`;
+        case window.constants.ResponseStatuses.unauthorizedResponse:
+          error = window.constants.NetworkErrorMessages.unauthorizedResponse;
           break;
-        case window.data.ResponseStatuses.notFoundResponse:
-          error = `Ничего не найдено`;
+        case window.constants.ResponseStatuses.notFoundResponse:
+          error = window.constants.NetworkErrorMessages.notFoundResponse;
           break;
-        case window.data.ResponseStatuses.internalErrorResponse:
-          error = `Произошла ошибка сервера`;
+        case window.constants.ResponseStatuses.internalErrorResponse:
+          error = window.constants.NetworkErrorMessages.internalErrorResponse;
           break;
         default:
           error = `Статус ответа: ${xhr.status} | ${xhr.statusText}`;
@@ -37,13 +37,13 @@
       errorHandler(`Запрос не успел выполниться за ` + xhr.timeout + `мс`);
     });
 
-    xhr.timeout = window.data.TIMEOUT_IN_MS; // 10s
+    xhr.timeout = window.constants.TIMEOUT_IN_MS; // 10s
 
     xhr.open(method, url);
     return xhr;
   };
   const loadData = (successHandler, errorHandler) => {
-    createXhrRequest(`GET`, window.data.LOAD_URL, successHandler, errorHandler).send();
+    createXhrRequest(`GET`, window.constants.LOAD_URL, successHandler, errorHandler).send();
   };
 
   window.network = {
