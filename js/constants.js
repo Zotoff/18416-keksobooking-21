@@ -1,22 +1,12 @@
 "use strict";
 
 (function () {
-  window.data = {
+  window.constants = {
     TYPES_VALUES: [`bungalow`, `flat`, `house`, `palace`],
     MIN_PRICES: [`0`, `1000`, `5000`, `10000`],
     TIMES_VALUES: [`12:00`, `13:00`, `14:00`],
-    GUESTS_VALUES: [
-      `1`,
-      `2`,
-      `3`,
-      `0`
-    ],
-    ROOMS_VALUES: [
-      `1`,
-      `2`,
-      `3`,
-      `100`
-    ],
+    GUESTS_VALUES: [`1`, `2`, `3`, `0`],
+    ROOMS_VALUES: [`1`, `2`, `3`, `100`],
     ErrorMessages: {
       valueMissing: `Пожалуйста, заполните форму!`,
       wrongRoom: `Вы выбрали количество мест, не соответствующее количеству гостей`,
@@ -29,6 +19,12 @@
       tooLong: `Превышена максимальная длина`,
       tooShort: `Количество введенных символов ниже минимального`,
       typeMismatch: `Пожалуйста, проверьте правильность ввода`,
+    },
+    NetworkErrorMessages: {
+      wrongResponse: `Неверный запрос`,
+      unauthorizedResponse: `Пользователь не авторизован`,
+      notFoundResponse: `Данные не найдены`,
+      internalErrorResponse: `Произошла ошибка сервера`,
     },
     ResponseStatuses: {
       successResponse: 200,
@@ -48,6 +44,7 @@
     ACTIVE_MAP_PIN_SIZE: 65,
     ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
     TIMEOUT_IN_MS: 10000,
-    LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`
+    LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
+    FILTERED_PINS_AMOUNT: 5,
   };
 })();

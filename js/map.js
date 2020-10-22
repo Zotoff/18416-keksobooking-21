@@ -11,22 +11,23 @@
     if (axis === `x`) {
       mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
     } else if (axis === `y`) {
-      mapPinEdgeCoord = Math.floor(+coord + pinSize + window.data.ACTIVE_MAP_PIN_EDGE_HEIGHT);
+      mapPinEdgeCoord = Math.floor(+coord + pinSize + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT);
     }
     return mapPinEdgeCoord;
+  };
+  const initialSetup = () => {
+    mapElement.classList.add(`map--faded`);
+    mapFiltersForm.setAttribute(`disabled`, `true`);
+    window.form.adFormElementFieldsets.forEach((element) => {
+      element.setAttribute(`disabled`, `true`);
+    });
+    window.pin.handleMainPin();
   };
 
   window.map = {
     mapSelector: mapElement,
     mapFiltersContainer: mapFiltersContainerElement,
-    initialSetup() {
-      mapElement.classList.add(`map--faded`);
-      mapFiltersForm.setAttribute(`disabled`, `true`);
-      window.form.adFormElementFieldsets.forEach((element) => {
-        element.setAttribute(`disabled`, `true`);
-      });
-      window.pin.handleMainPin();
-    },
+    initialSetup,
     setMapActive() {
       mapFiltersForm.removeAttribute(`disabled`);
       window.form.adFormElementFieldsets.forEach((element) => {
@@ -37,19 +38,21 @@
 
       const mapPinActiveXCoord = window.utils.removeSymbolsFromString(mapPinActiveX, 2);
       const mapPinActiveYCoord = window.utils.removeSymbolsFromString(mapPinActiveY, 2);
-      const mapPinActiveEdgeXCoord = calculateMapPinEdgeCoord(`x`, mapPinActiveXCoord, window.data.ACTIVE_MAP_PIN_SIZE);
-      const mapPinActiveEdgeYCoord = calculateMapPinEdgeCoord(`y`, mapPinActiveYCoord, window.data.ACTIVE_MAP_PIN_SIZE);
+      const mapPinActiveEdgeXCoord = calculateMapPinEdgeCoord(`x`, mapPinActiveXCoord, window.constants.ACTIVE_MAP_PIN_SIZE);
+      const mapPinActiveEdgeYCoord = calculateMapPinEdgeCoord(`y`, mapPinActiveYCoord, window.constants.ACTIVE_MAP_PIN_SIZE);
       const edgePinCoordsMessage = `${mapPinActiveEdgeXCoord} ${mapPinActiveEdgeYCoord}`;
       window.form.adFormAddress.setAttribute(`value`, edgePinCoordsMessage);
       window.form.adFormAddress.setAttribute(`readonly`, `readonly`);
 
       const handleResponse = (data) => {
-        const response = data;
-        window.card.fillDomWithAnnouncements(response);
-        window.pin.setupPins(response);
+        const filteredResponse = data.slice(0, window.constants.FILTERED_PINS_AMOUNT);
+
+        window.card.fillDomWithAnnouncements(filteredResponse);
+        window.pin.setupPins(filteredResponse);
         window.form.interactWithForm();
         window.card.handleCardEvents();
         window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin`), document.querySelectorAll(`.map__card`));
+        window.filter.filterTypes(filteredResponse);
         window.form.submitForm();
       };
       const onSuccess = (response) => {

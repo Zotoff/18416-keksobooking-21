@@ -12,62 +12,36 @@
   const adFormCapacity = adFormElement.capacity;
   const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
 
+  const makeItemInvalid = (item, validityState) => {
+    item.setCustomValidity(validityState);
+    window.utils.makeRedBorder(item);
+    item.parentNode.setAttribute(`valid`, `false`);
+    adFormElement.reportValidity();
+  };
+
   const checkInputValidity = (item) => {
     if (item.validity.valueMissing) {
-      item.setCustomValidity(window.data.ErrorMessages.valueMissing);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.valueMissing);
     } else if (item.validity.wrongRoom) {
-      item.setCustomValidity(window.data.ErrorMessages.wrongRoom);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.wrongRoom);
     } else if (item.validity.emptyItem) {
-      item.setCustomValidity(window.data.ErrorMessages.emptyItem);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.emptyItem);
     } else if (item.validity.badInput) {
-      item.setCustomValidity(window.data.ErrorMessages.badInput);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.badInput);
     } else if (item.validity.patternMismatch) {
-      item.setCustomValidity(window.data.ErrorMessages.patternMismatch);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.patternMismatch);
     } else if (item.validity.rangeOverflow) {
-      item.setCustomValidity(window.data.ErrorMessages.rangeOverflow);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.rangeOverflow);
     } else if (item.validity.rangeUnderflow) {
-      item.setCustomValidity(window.data.ErrorMessages.rangeUnderflow);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.rangeUnderflow);
     } else if (item.validity.stepMismatch) {
-      item.setCustomValidity(window.data.ErrorMessages.stepMismatch);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.stepMismatch);
     } else if (item.validity.tooLong) {
-      item.setCustomValidity(window.data.ErrorMessages.tooLong);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.tooLong);
     } else if (item.validity.tooShort) {
-      item.setCustomValidity(window.data.ErrorMessages.tooShort);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.tooShort);
     } else if (item.validity.typeMismatch) {
-      item.setCustomValidity(window.data.ErrorMessages.typeMismatch);
-      window.utils.makeRedBorder(item);
-      item.parentNode.setAttribute(`valid`, `false`);
-      adFormElement.reportValidity();
+      makeItemInvalid(item, window.constants.ErrorMessages.typeMismatch);
     } else {
       window.utils.removeRedBorder(item);
       item.setCustomValidity(``);
@@ -80,20 +54,20 @@
     adFormAddress: document.querySelector(`input[name=address]`),
     adFormElementFieldsets: adFormElement.querySelectorAll(`fieldset`),
     activateForm() {
-      window.utils.syncFields(adFormRoom, adFormCapacity, window.data.ROOMS_VALUES, window.data.GUESTS_VALUES, window.utils.syncGuestWithRooms);
-      window.utils.syncFields(adFormType, adFormPrice, window.data.TYPES_VALUES, window.data.MIN_PRICES, window.utils.syncValueWithMin);
-      window.utils.syncFields(adFormCheckIn, adFormCheckOut, window.data.TIMES_VALUES, window.data.TIMES_VALUES, window.utils.syncValue);
+      window.utils.syncFields(adFormRoom, adFormCapacity, window.constants.ROOMS_VALUES, window.constants.GUESTS_VALUES, window.utils.syncGuestWithRooms);
+      window.utils.syncFields(adFormType, adFormPrice, window.constants.TYPES_VALUES, window.constants.MIN_PRICES, window.utils.syncValueWithMin);
+      window.utils.syncFields(adFormCheckIn, adFormCheckOut, window.constants.TIMES_VALUES, window.constants.TIMES_VALUES, window.utils.syncValue);
       adFormRoom.addEventListener(`change`, () => {
-        window.utils.syncFields(adFormRoom, adFormCapacity, window.data.ROOMS_VALUES, window.data.GUESTS_VALUES, window.utils.syncGuestWithRooms);
+        window.utils.syncFields(adFormRoom, adFormCapacity, window.constants.ROOMS_VALUES, window.constants.GUESTS_VALUES, window.utils.syncGuestWithRooms);
       });
       adFormType.addEventListener(`change`, () => {
-        window.utils.syncFields(adFormType, adFormPrice, window.data.TYPES_VALUES, window.data.MIN_PRICES, window.utils.syncValueWithMin);
+        window.utils.syncFields(adFormType, adFormPrice, window.constants.TYPES_VALUES, window.constants.MIN_PRICES, window.utils.syncValueWithMin);
       });
       adFormCheckIn.addEventListener(`change`, () => {
-        window.utils.syncFields(adFormCheckIn, adFormCheckOut, window.data.TIMES_VALUES, window.data.TIMES_VALUES, window.utils.syncValue);
+        window.utils.syncFields(adFormCheckIn, adFormCheckOut, window.constants.TIMES_VALUES, window.constants.TIMES_VALUES, window.utils.syncValue);
       });
       adFormCheckOut.addEventListener(`change`, () => {
-        window.utils.syncFields(adFormCheckOut, adFormCheckIn, window.data.TIMES_VALUES, window.data.TIMES_VALUES, window.utils.syncValue);
+        window.utils.syncFields(adFormCheckOut, adFormCheckIn, window.constants.TIMES_VALUES, window.constants.TIMES_VALUES, window.utils.syncValue);
       });
     },
     checkFormValidity() {

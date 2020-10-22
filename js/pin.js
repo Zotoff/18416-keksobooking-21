@@ -30,44 +30,65 @@
     });
     mapPinsElement.appendChild(FRAGMENT);
   };
+  const initiatePins = () => {
+    if (window.map.mapSelector.classList.contains(`map--faded`)) {
+      const mapPinInactiveXCoord = window.utils.removeSymbolsFromString(mapPinInactiveX, 2);
+      const mapPinInactiveYCoord = window.utils.removeSymbolsFromString(mapPinInactiveY, 2);
+      const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, window.constants.ROUND_MAP_PIN_SIZE);
+      const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, window.constants.ROUND_MAP_PIN_SIZE);
+      const coordMessage = `${mapPinXCenterCoord} ${mapPinYCenterCoord}`;
+      window.form.adFormAddress.setAttribute(`value`, coordMessage);
+    }
+  };
+  const handleMainPin = () => {
+    mainPinElement.addEventListener(`mousedown`, (evt) => {
+      window.utils.checkMouseDownEvent(evt, 0, window.map.setMapActive);
+    });
+
+    mainPinElement.addEventListener(`keydown`, (evt) => {
+      window.utils.checkKeyDownEvent(evt, `Enter`, window.map.setMapActive);
+    });
+  };
+  const handlePinsAndCards = (pins, cards) => {
+    pins.forEach((pin) => {
+      pin.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const pinAlt = pin.querySelector(`img`).alt;
+        cards.forEach((card) => {
+          if (card.querySelector(`.popup__title`).innerText === pinAlt) {
+            card.classList.toggle(`hidden`);
+            return;
+          }
+          card.classList.add(`hidden`);
+        });
+      });
+    });
+  };
+  const renderFilteredPins = (title) => {
+    let filteredPins = Array.from(mapPinsElement.querySelectorAll(`.map__pin`));
+    let filteredPinsWithoutMain = filteredPins.slice(1, window.constants.FILTERED_PINS_AMOUNT + 1);
+    filteredPinsWithoutMain.forEach((pin) => {
+      if (title === pin.querySelector(`img`).alt) {
+        pin.classList.remove(`hidden`);
+        return true;
+      }
+      if (title === `all`) {
+        pin.classList.remove(`hidden`);
+        return true;
+      }
+      pin.classList.add(`hidden`);
+      return true;
+    });
+  };
 
   window.pin = {
+    mapPinsElement,
     setupPins(data) {
       fillDomWithPins(data);
     },
-    initiatePins() {
-      if (window.map.mapSelector.classList.contains(`map--faded`)) {
-        const mapPinInactiveXCoord = window.utils.removeSymbolsFromString(mapPinInactiveX, 2);
-        const mapPinInactiveYCoord = window.utils.removeSymbolsFromString(mapPinInactiveY, 2);
-        const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, window.data.ROUND_MAP_PIN_SIZE);
-        const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, window.data.ROUND_MAP_PIN_SIZE);
-        const coordMessage = `${mapPinXCenterCoord} ${mapPinYCenterCoord}`;
-        window.form.adFormAddress.setAttribute(`value`, coordMessage);
-      }
-    },
-    handleMainPin() {
-      mainPinElement.addEventListener(`mousedown`, (evt) => {
-        window.utils.checkMouseDownEvent(evt, 0, window.map.setMapActive);
-      });
-
-      mainPinElement.addEventListener(`keydown`, (evt) => {
-        window.utils.checkKeyDownEvent(evt, `Enter`, window.map.setMapActive);
-      });
-    },
-    handlePinsAndCards(pins, cards) {
-      pins.forEach((pin) => {
-        pin.addEventListener(`click`, (evt) => {
-          evt.preventDefault();
-          const pinAlt = pin.querySelector(`img`).alt;
-          cards.forEach((card) => {
-            if (card.querySelector(`.popup__title`).innerText === pinAlt) {
-              card.classList.toggle(`hidden`);
-            } else {
-              card.classList.add(`hidden`);
-            }
-          });
-        });
-      });
-    }
+    initiatePins,
+    handleMainPin,
+    handlePinsAndCards,
+    renderFilteredPins,
   };
 })();
