@@ -10,6 +10,10 @@
   const adFormCheckOut = adFormElement.timeout;
   const adFormRoom = adFormElement.rooms;
   const adFormCapacity = adFormElement.capacity;
+  const adFormAvatar = adFormElement.avatar;
+  const adFormImages = adFormElement.images;
+  const avatarFieldSet = adFormElement.querySelector(`.ad-form-header`);
+  const imagesFieldSet = adFormElement.querySelector(`.ad-form__photo-container`).parentNode;
   const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
 
   const makeItemInvalid = (item, validityState) => {
@@ -17,6 +21,36 @@
     window.utils.makeRedBorder(item);
     item.parentNode.setAttribute(`valid`, `false`);
     adFormElement.reportValidity();
+  };
+
+  const makeFileItemInvalid = (item, fieldSetSelector, validityState) => {
+    item.setCustomValidity(validityState);
+    window.utils.makeRedBorder(item);
+    fieldSetSelector.setAttribute(`valid`, `false`);
+    adFormElement.reportValidity();
+  };
+
+  const checkFileTypeValidity = (fileInput, fieldSetSelector) => {
+    if (fileInput.files.length === 0) {
+      makeFileItemInvalid(fileInput, fieldSetSelector, window.constants.ErrorMessages.noFilesSelected);
+    } else {
+      for (let file of fileInput.files) {
+        window.constants.validFileTypes.forEach((type) => {
+          if (file.type === type) {
+            window.utils.removeRedBorder(fileInput);
+            fileInput.setCustomValidity(``);
+            return true;
+          }
+          makeItemInvalid(fileInput, window.constants.ErrorMessages.wrongTypeOfFile);
+          return true;
+        });
+      }
+      window.utils.removeRedBorder(fileInput);
+      fieldSetSelector.setAttribute(`valid`, true);
+      fileInput.setCustomValidity(``);
+      return true;
+    }
+    return true;
   };
 
   const checkInputValidity = (item) => {
@@ -74,6 +108,8 @@
       checkInputValidity(adFormTitle);
       checkInputValidity(adFormPrice);
       checkInputValidity(adFormAddressElement);
+      checkFileTypeValidity(adFormAvatar, avatarFieldSet);
+      checkFileTypeValidity(adFormImages, imagesFieldSet);
     },
     interactWithForm() {
       checkInputValidity(adFormTitle);
