@@ -19,8 +19,6 @@
       tooLong: `Превышена максимальная длина`,
       tooShort: `Количество введенных символов ниже минимального`,
       typeMismatch: `Пожалуйста, проверьте правильность ввода`,
-      noFilesSelected: `Не выбран файл для загрузки`,
-      wrongTypeOfFile: `Разрешены только файлы в формате: jpeg, png, jpg`
     },
     NetworkErrorMessages: {
       wrongResponse: `Неверный запрос`,
@@ -41,11 +39,6 @@
       House: `house`,
       Flat: `flat`
     },
-    validFileTypes: [
-      `image/jpeg`,
-      `image/png`,
-      `image/jpg`
-    ],
     MAX_ANNOUNCEMENTS: 8,
     ROUND_MAP_PIN_SIZE: 65,
     ACTIVE_MAP_PIN_SIZE: 65,

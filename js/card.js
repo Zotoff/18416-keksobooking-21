@@ -100,11 +100,6 @@
           element.classList.add(`hidden`);
         };
         window.utils.checkKeyDownEvent(evt, `Enter`, hideElement);
-      });
-      document.addEventListener(`keydown`, (evt) => {
-        const hideElement = () => {
-          element.classList.add(`hidden`);
-        };
         window.utils.checkKeyDownEvent(evt, `Escape`, hideElement);
       });
     });
