@@ -19,6 +19,8 @@
       tooLong: `Превышена максимальная длина`,
       tooShort: `Количество введенных символов ниже минимального`,
       typeMismatch: `Пожалуйста, проверьте правильность ввода`,
+      noFilesSelected: `Не выбран файл для загрузки`,
+      wrongTypeOfFile: `Разрешены только файлы в формате: jpeg, png, jpg`
     },
     NetworkErrorMessages: {
       wrongResponse: `Неверный запрос`,
@@ -26,6 +28,11 @@
       notFoundResponse: `Данные не найдены`,
       internalErrorResponse: `Произошла ошибка сервера`,
     },
+    validFileTypes: [
+      `image/jpeg`,
+      `image/png`,
+      `image/jpg`
+    ],
     ResponseStatuses: {
       successResponse: 200,
       wrongResponse: 400,
