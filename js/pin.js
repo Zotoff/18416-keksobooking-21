@@ -9,10 +9,6 @@
   const mapPinInactiveY = document.querySelector(`.map__pin`).style.top;
   const mapPinOffsetY = (window.constants.ACTIVE_MAP_PIN_SIZE / 2) + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT;
 
-  const calculateMapPinCenterCoord = (coord, pinSize) => {
-    const centerCoord = Math.floor(+coord + (pinSize / 2));
-    return centerCoord;
-  };
   const generateMapPinElement = (element) => {
     const mapPinTemplate = mapPinElement.cloneNode(true);
     const mapPinButton = mapPinTemplate.querySelector(`.map__pin`);
@@ -35,8 +31,6 @@
     if (window.map.mapSelector.classList.contains(`map--faded`)) {
       const mapPinInactiveXCoord = window.utils.removeSymbolsFromString(mapPinInactiveX, 2);
       const mapPinInactiveYCoord = window.utils.removeSymbolsFromString(mapPinInactiveY, 2);
-      // const mapPinXCenterCoord = calculateMapPinCenterCoord(mapPinInactiveXCoord, window.constants.ROUND_MAP_PIN_SIZE);
-      // const mapPinYCenterCoord = calculateMapPinCenterCoord(mapPinInactiveYCoord, window.constants.ROUND_MAP_PIN_SIZE);
       handleMainPin();
       window.form.setAddress(`initial`, mapPinInactiveXCoord, mapPinInactiveYCoord);
     }
