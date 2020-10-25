@@ -28,7 +28,7 @@
       notFoundResponse: `Данные не найдены`,
       internalErrorResponse: `Произошла ошибка сервера`,
     },
-    validFileTypes: [
+    VALID_FILE_TYPES: [
       `image/jpeg`,
       `image/png`,
       `image/jpg`
@@ -53,5 +53,9 @@
     TIMEOUT_IN_MS: 10000,
     LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
     FILTERED_PINS_AMOUNT: 5,
+    CoordY: {
+      MIN: 130,
+      MAX: 630
+    }
   };
 })();
