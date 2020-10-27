@@ -35,7 +35,7 @@
       makeFileItemInvalid(fileInput, fieldSetSelector, window.constants.ErrorMessages.noFilesSelected);
     } else {
       for (let file of fileInput.files) {
-        window.constants.validFileTypes.forEach((type) => {
+        window.constants.VALID_FILE_TYPES.forEach((type) => {
           if (file.type === type) {
             window.utils.removeRedBorder(fileInput);
             fileInput.setCustomValidity(``);
@@ -84,9 +84,46 @@
     }
   };
 
+  const setAddress = (toggler, coordX, coordY) => {
+    if (toggler === `initial`) {
+      const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
+        let mapPinEdgeCoord = 0;
+        if (axis === `x`) {
+          mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
+        } else if (axis === `y`) {
+          mapPinEdgeCoord = Math.floor(+coord + pinSize);
+        }
+        return mapPinEdgeCoord;
+      };
+
+      const calculatedXCoord = calculateMapPinEdgeCoord(`x`, coordX, window.constants.ACTIVE_MAP_PIN_SIZE);
+      const calculatedYCoord = calculateMapPinEdgeCoord(`y`, coordY, window.constants.ACTIVE_MAP_PIN_SIZE);
+
+      const coordMessage = `${calculatedXCoord} ${calculatedYCoord}`;
+      adFormAddressElement.setAttribute(`value`, coordMessage);
+    }
+    if (toggler === `work`) {
+      // const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
+      //   let mapPinEdgeCoord = 0;
+      //   if (axis === `x`) {
+      //     mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
+      //   } else if (axis === `y`) {
+      //     mapPinEdgeCoord = Math.floor(+coord + pinSize + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT);
+      //   }
+      //   return mapPinEdgeCoord;
+      // };
+
+      // const calculatedXCoord = calculateMapPinEdgeCoord(`x`, coordX, window.constants.ACTIVE_MAP_PIN_SIZE);
+      // const calculatedYCoord = calculateMapPinEdgeCoord(`y`, coordY, window.constants.ACTIVE_MAP_PIN_SIZE);
+
+      const coordMessage = `${coordX} ${coordY}`;
+      adFormAddressElement.setAttribute(`value`, coordMessage);
+    }
+    adFormAddressElement.setAttribute(`readonly`, `readonly`);
+  };
+
   window.form = {
     adFormElement,
-    adFormAddress: document.querySelector(`input[name=address]`),
     adFormElementFieldsets: adFormElement.querySelectorAll(`fieldset`),
     activateForm() {
       window.utils.syncFields(adFormRoom, adFormCapacity, window.constants.ROOMS_VALUES, window.constants.GUESTS_VALUES, window.utils.syncGuestWithRooms);
@@ -133,6 +170,7 @@
           adFormElement.submit();
         }
       });
-    }
+    },
+    setAddress
   };
 })();
