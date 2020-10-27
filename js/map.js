@@ -34,14 +34,11 @@
 
       const handleResponse = (data) => {
         const filteredResponse = data.slice(0, window.constants.FILTERED_PINS_AMOUNT);
-
-        window.card.fillDomWithAnnouncements(filteredResponse);
+        window.card.getAnnouncements(filteredResponse);
         window.pin.setupPins(filteredResponse);
-        // window.form.interactWithForm();
-        window.card.handleCardEvents();
-        window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin`), document.querySelectorAll(`.map__card`));
+        window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin`));
         window.pin.moveMainPin();
-        window.filter.filterTypes(filteredResponse);
+        window.filter.filterTypes();
         window.form.submitForm();
       };
       const onSuccess = (response) => {
@@ -53,5 +50,10 @@
       };
       window.network.load(onSuccess, onError);
     },
+    workWithActiveMap() {
+      window.pin.moveMainPin();
+      window.filter.filterTypes();
+      window.form.submitForm();
+    }
   };
 })();

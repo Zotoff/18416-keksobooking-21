@@ -47,8 +47,8 @@
       Flat: `flat`
     },
     MAX_ANNOUNCEMENTS: 8,
-    ROUND_MAP_PIN_SIZE: 65,
-    ACTIVE_MAP_PIN_SIZE: 65,
+    ROUND_MAP_PIN_SIZE: 62,
+    ACTIVE_MAP_PIN_SIZE: 62,
     ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
     TIMEOUT_IN_MS: 10000,
     LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,

@@ -1,13 +1,40 @@
 "use strict";
 
 (function () {
+  const announcements = [];
+  const getAnnouncements = (data) => {
+    for (let announcement of data) {
+      const Announcement = {};
+      Announcement.title = announcement.offer.title;
+      Announcement.avatar = announcement.author.avatar;
+      Announcement.address = announcement.offer.address;
+      Announcement.price = announcement.offer.price;
+      Announcement.rooms = announcement.offer.rooms;
+      Announcement.guests = announcement.offer.guests;
+      Announcement.type = announcement.offer.type;
+      Announcement.checkin = announcement.offer.checkin;
+      Announcement.checkout = announcement.offer.checkout;
+      Announcement.features = announcement.offer.features;
+      Announcement.description = announcement.offer.description;
+      Announcement.photos = announcement.offer.photos;
+      Announcement.location = announcement.location;
+      Announcement.id = window.utils.getAvatarNumber(announcement.author.avatar);
+
+      announcements.push(Announcement);
+    }
+  };
   const fillDomWithAnnouncements = (data) => {
     const FRAGMENT = window.utils.fragment;
     const cardElement = document.querySelector(`#card`).content;
+    const info = data;
 
-    const generateCardElement = (element) => {
+    const cardElements = document.querySelectorAll(`.map__card`);
+    cardElements.forEach((element) => {
+      element.remove();
+    });
+
+    const generateCardElement = () => {
       const cardTemplate = cardElement.cloneNode(true);
-      const cardMain = cardTemplate.querySelector(`.popup`);
       const cardTitle = cardTemplate.querySelector(`.popup__title`);
       const cardAddress = cardTemplate.querySelector(`.popup__text--address`);
       const cardPrice = cardTemplate.querySelector(`.popup__text--price`);
@@ -20,52 +47,51 @@
       const cardHousePhoto = cardTemplate.querySelector(`.popup__photos img`);
       const cardHouseUserAvatar = cardTemplate.querySelector(`.popup__avatar`);
 
-      cardMain.classList.add(`hidden`);
-      window.utils.checkUndefinedValue(element.offer.title, cardTitle, () => {
-        window.utils.enterTextContent(cardTitle, element.offer.title);
+      window.utils.checkUndefinedValue(info.title, cardTitle, () => {
+        window.utils.enterTextContent(cardTitle, info.title);
       });
-      window.utils.checkUndefinedValue(element.offer.address, cardAddress, () => {
-        window.utils.enterTextContent(cardAddress, element.offer.address);
+      window.utils.checkUndefinedValue(info.address, cardAddress, () => {
+        window.utils.enterTextContent(cardAddress, info.address);
       });
-      window.utils.checkUndefinedValue(element.offer.price, cardPrice, () => {
-        window.utils.enterTextContent(cardPrice, `${element.offer.price}₽/ночь`);
+      window.utils.checkUndefinedValue(info.price, cardPrice, () => {
+        window.utils.enterTextContent(cardPrice, `${info.price}₽/ночь`);
       });
-      window.utils.checkUndefinedValue(element.offer.rooms, cardHouseRoomsAndGuests, () => {
-        window.utils.checkUndefinedValue(element.offer.guests, cardHouseRoomsAndGuests, () => {
-          window.utils.enterTextContent(cardHouseRoomsAndGuests, `${element.offer.rooms} комнаты для ${element.offer.guests} гостей`);
+      window.utils.checkUndefinedValue(info.rooms, cardHouseRoomsAndGuests, () => {
+        window.utils.checkUndefinedValue(info.guests, cardHouseRoomsAndGuests, () => {
+          window.utils.enterTextContent(cardHouseRoomsAndGuests, `${info.rooms} комнаты для ${info.guests} гостей`);
         });
       });
-      window.utils.checkUndefinedValue(element.offer.checkin, cardHouseCheckTime, () => {
-        window.utils.checkUndefinedValue(element.offer.checkout, cardHouseCheckTime, () => {
-          window.utils.enterTextContent(cardHouseCheckTime, `Заезд после ${element.offer.checkin}, выезд до ${element.offer.checkout}`);
+      window.utils.checkUndefinedValue(info.checkin, cardHouseCheckTime, () => {
+        window.utils.checkUndefinedValue(info.checkout, cardHouseCheckTime, () => {
+          window.utils.enterTextContent(cardHouseCheckTime, `Заезд после ${info.checkin}, выезд до ${info.checkout}`);
         });
       });
-      window.utils.checkUndefinedValue(element.offer.features, cardHouseFeatures, () => {
-        element.offer.features.forEach((feature) => {
+      window.utils.checkUndefinedValue(info.features, cardHouseFeatures, () => {
+        info.features.forEach((feature) => {
           cardHouseFeatures.textContent += ` ` + feature;
         });
       });
-      window.utils.checkUndefinedValue(element.offer.description, cardHouseDescription, () => {
-        window.utils.enterTextContent(cardHouseDescription, element.offer.description);
+      window.utils.checkUndefinedValue(info.description, cardHouseDescription, () => {
+        window.utils.enterTextContent(cardHouseDescription, info.description);
       });
-      window.utils.checkUndefinedValue(element.offer.photos, cardHousePhotosElement, () => {
+      window.utils.checkUndefinedValue(info.photos, cardHousePhotosElement, () => {
         cardHousePhotosElement.innerHTML = ``;
-        element.offer.photos.forEach((photo) => {
+        info.photos.forEach((photo) => {
           const photoSrc = photo;
           const cardPhoto = cardHousePhoto.cloneNode(true);
           cardPhoto.classList.add(`popup__photo`);
           cardPhoto.setAttribute(`width`, `45`);
           cardPhoto.setAttribute(`height`, `45`);
-          cardPhoto.setAttribute(`alt`, element.offer.title);
+          cardPhoto.setAttribute(`alt`, info.title);
           cardPhoto.src = photoSrc;
           cardHousePhotosElement.appendChild(cardPhoto);
         });
       });
-      window.utils.checkUndefinedValue(element.author.avatar, cardHouseUserAvatar, () => {
-        cardHouseUserAvatar.src = element.author.avatar;
+      window.utils.checkUndefinedValue(info.avatar, cardHouseUserAvatar, () => {
+        cardHouseUserAvatar.src = info.avatar;
       });
-      window.utils.checkUndefinedValue(element.offer.type, cardHouseType, () => {
-        switch (element.offer.type) {
+      window.utils.checkUndefinedValue(info.type, cardHouseType, () => {
+        switch (info.type) {
           case window.constants.OfferTypes.Palace:
             cardHouseType.textContent = `Дворец`;
             break;
@@ -82,35 +108,36 @@
       });
       return cardTemplate;
     };
-    for (let item of data) {
-      FRAGMENT.appendChild(generateCardElement(item));
-    }
+
+    FRAGMENT.appendChild(generateCardElement(data));
     window.map.mapSelector.insertBefore(FRAGMENT, window.map.mapFiltersContainer);
   };
   const handleCardEvents = () => {
-    const popUpElements = document.querySelectorAll(`.popup`);
-    popUpElements.forEach((element) => {
-      const popUpCloseBtn = element.querySelector(`.popup__close`);
+    const popUpElement = document.querySelector(`.popup`);
+    if (popUpElement) {
+      const popUpCloseBtn = popUpElement.querySelector(`.popup__close`);
       popUpCloseBtn.addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        window.utils.hideElement(element);
+        window.utils.hideElement(popUpElement);
       });
       popUpCloseBtn.addEventListener(`keydown`, (evt) => {
         const hideElement = () => {
-          element.classList.add(`hidden`);
+          popUpElement.classList.add(`hidden`);
         };
         window.utils.checkKeyDownEvent(evt, `Enter`, hideElement);
       });
       document.addEventListener(`keydown`, (evt) => {
         const hideElement = () => {
-          element.classList.add(`hidden`);
+          popUpElement.classList.add(`hidden`);
         };
         window.utils.checkKeyDownEvent(evt, `Escape`, hideElement);
       });
-    });
+    }
   };
   window.card = {
     fillDomWithAnnouncements,
-    handleCardEvents
+    handleCardEvents,
+    getAnnouncements,
+    announcements
   };
 })();

@@ -61,6 +61,12 @@
       option.disabled = (currentValue === `0`) ? (option.value !== `0`) : (option.value > currentValue || option.value === `0`);
     });
   };
+  const getAvatarNumber = (avatar) => {
+    const avatarText = avatar.match(/\d+/);
+    const avatarNumber = avatarText[0];
+    const id = +avatarNumber;
+    return id;
+  };
   window.utils = {
     fragment: document.createDocumentFragment(),
     generateRandomValue,
@@ -77,5 +83,6 @@
     syncValue,
     syncValueWithMin,
     syncGuestWithRooms,
+    getAvatarNumber,
   };
 })();

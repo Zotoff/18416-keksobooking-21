@@ -103,20 +103,20 @@
       adFormAddressElement.setAttribute(`value`, coordMessage);
     }
     if (toggler === `work`) {
-      const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
-        let mapPinEdgeCoord = 0;
-        if (axis === `x`) {
-          mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
-        } else if (axis === `y`) {
-          mapPinEdgeCoord = Math.floor(+coord + pinSize + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT);
-        }
-        return mapPinEdgeCoord;
-      };
+      // const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
+      //   let mapPinEdgeCoord = 0;
+      //   if (axis === `x`) {
+      //     mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
+      //   } else if (axis === `y`) {
+      //     mapPinEdgeCoord = Math.floor(+coord + pinSize + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT);
+      //   }
+      //   return mapPinEdgeCoord;
+      // };
 
-      const calculatedXCoord = calculateMapPinEdgeCoord(`x`, coordX, window.constants.ACTIVE_MAP_PIN_SIZE);
-      const calculatedYCoord = calculateMapPinEdgeCoord(`y`, coordY, window.constants.ACTIVE_MAP_PIN_SIZE);
+      // const calculatedXCoord = calculateMapPinEdgeCoord(`x`, coordX, window.constants.ACTIVE_MAP_PIN_SIZE);
+      // const calculatedYCoord = calculateMapPinEdgeCoord(`y`, coordY, window.constants.ACTIVE_MAP_PIN_SIZE);
 
-      const coordMessage = `${calculatedXCoord} ${calculatedYCoord}`;
+      const coordMessage = `${coordX} ${coordY}`;
       adFormAddressElement.setAttribute(`value`, coordMessage);
     }
     adFormAddressElement.setAttribute(`readonly`, `readonly`);
