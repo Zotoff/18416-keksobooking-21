@@ -13,7 +13,7 @@
           return true;
         }
         pin.classList.remove(`hidden`);
-        return true;
+        return pin;
       });
     });
   };

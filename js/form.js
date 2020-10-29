@@ -12,9 +12,12 @@
   const adFormCapacity = adFormElement.capacity;
   const adFormAvatar = adFormElement.avatar;
   const adFormImages = adFormElement.images;
+  const adFormFeatures = adFormElement.features;
+  const adFormDescription = adFormElement.description;
   const avatarFieldSet = adFormElement.querySelector(`.ad-form-header`);
   const imagesFieldSet = adFormElement.querySelector(`.ad-form__photo-container`).parentNode;
   const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
+  const adFeatures = [];
 
   const makeItemInvalid = (item, validityState) => {
     item.setCustomValidity(validityState);
@@ -39,16 +42,15 @@
           if (file.type === type) {
             window.utils.removeRedBorder(fileInput);
             fileInput.setCustomValidity(``);
-            return true;
+            fieldSetSelector.setAttribute(`valid`, `true`);
           }
-          makeItemInvalid(fileInput, window.constants.ErrorMessages.wrongTypeOfFile);
-          return true;
+          makeFileItemInvalid(fileInput, fieldSetSelector, window.constants.ErrorMessages.wrongTypeOfFile);
         });
       }
       window.utils.removeRedBorder(fileInput);
       fieldSetSelector.setAttribute(`valid`, true);
       fileInput.setCustomValidity(``);
-      return true;
+      adFormElement.reportValidity();
     }
     return true;
   };
@@ -81,7 +83,58 @@
       window.utils.removeRedBorder(item);
       item.setCustomValidity(``);
       item.parentNode.setAttribute(`valid`, `true`);
+      adFormElement.reportValidity();
     }
+  };
+
+  const onSuccess = () => {
+    const FRAGMENT = window.utils.fragment;
+    const mainElement = document.querySelector(`main`);
+    const successElement = document.querySelector(`#success`).content;
+    const successMessage = `Отправка данных прошла успешно`;
+
+    const successTemplate = successElement.cloneNode(true);
+    const successMessageElement = successTemplate.querySelector(`.success__message`);
+    successMessageElement.innerHTML = `<p>${successMessage}</p>`;
+
+    FRAGMENT.appendChild(successTemplate);
+    mainElement.insertAdjacentElement(`afterBegin`, FRAGMENT);
+
+  };
+  const onError = (message) => {
+    const FRAGMENT = window.utils.fragment;
+    const mainElement = document.querySelector(`main`);
+    const errorElement = document.querySelector(`#error`).content;
+
+    const errorTemplate = errorElement.cloneNode(true);
+    const errorMessage = errorElement.querySelector(`.error__message`);
+    errorMessage.innerText = `${message}`;
+
+    FRAGMENT.appendChild(errorTemplate);
+    mainElement.append(FRAGMENT);
+
+    const errorSelector = document.querySelector(`.error`);
+
+    const hideError = () => {
+      errorSelector.classList.add(`hidden`);
+    };
+
+    const errorButton = errorSelector.querySelector(`.error__button`);
+
+    document.addEventListener(`keydown`, (evt) => {
+      hideError();
+      window.utils.checkKeyDownEvent(evt, `Escape`, hideError);
+    });
+
+    document.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      hideError();
+    });
+
+    errorButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      hideError();
+    });
   };
 
   const setAddress = (toggler, coordX, coordY) => {
@@ -103,23 +156,14 @@
       adFormAddressElement.setAttribute(`value`, coordMessage);
     }
     if (toggler === `work`) {
-      // const calculateMapPinEdgeCoord = (axis, coord, pinSize) => {
-      //   let mapPinEdgeCoord = 0;
-      //   if (axis === `x`) {
-      //     mapPinEdgeCoord = Math.floor(+coord + (pinSize / 2));
-      //   } else if (axis === `y`) {
-      //     mapPinEdgeCoord = Math.floor(+coord + pinSize + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT);
-      //   }
-      //   return mapPinEdgeCoord;
-      // };
-
-      // const calculatedXCoord = calculateMapPinEdgeCoord(`x`, coordX, window.constants.ACTIVE_MAP_PIN_SIZE);
-      // const calculatedYCoord = calculateMapPinEdgeCoord(`y`, coordY, window.constants.ACTIVE_MAP_PIN_SIZE);
-
       const coordMessage = `${coordX} ${coordY}`;
       adFormAddressElement.setAttribute(`value`, coordMessage);
     }
     adFormAddressElement.setAttribute(`readonly`, `readonly`);
+  };
+
+  const submitAdForm = (formData) => {
+    window.network.upload(formData, onSuccess, onError);
   };
 
   window.form = {
@@ -140,6 +184,11 @@
       });
       adFormCheckOut.addEventListener(`change`, () => {
         window.utils.syncFields(adFormCheckOut, adFormCheckIn, window.constants.TIMES_VALUES, window.constants.TIMES_VALUES, window.utils.syncValue);
+      });
+      adFormFeatures.forEach((feature) => {
+        feature.addEventListener(`change`, () => {
+          adFeatures.push(feature.value);
+        });
       });
     },
     checkFormValidity() {
@@ -167,7 +216,18 @@
         this.checkFormValidity();
         const fieldSets = adFormElement.querySelectorAll(`fieldset[valid=false]`);
         if (!fieldSets.length) {
-          adFormElement.submit();
+          const formData = new FormData();
+          formData.append(`price`, adFormPrice.value);
+          formData.append(`title`, adFormTitle.value);
+          formData.append(`type`, adFormType.value);
+          formData.append(`rooms`, adFormRoom.value);
+          formData.append(`guests`, adFormCapacity.value);
+          formData.append(`address`, adFormAddressElement.value);
+          formData.append(`checkin`, adFormCheckIn.value);
+          formData.append(`checkout`, adFormCheckOut.value);
+          formData.append(`description`, adFormDescription.value);
+          formData.append(`features`, adFeatures);
+          submitAdForm(formData);
         }
       });
     },
