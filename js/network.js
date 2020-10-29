@@ -45,8 +45,12 @@
   const loadData = (successHandler, errorHandler) => {
     createXhrRequest(`GET`, window.constants.LOAD_URL, successHandler, errorHandler).send();
   };
+  const uploadData = (data, successHandler, errorHandler) => {
+    createXhrRequest(`POST`, window.constants.UPLOAD_URL, successHandler, errorHandler).send([data]);
+  };
 
   window.network = {
-    load: loadData
+    load: loadData,
+    upload: uploadData
   };
 })();

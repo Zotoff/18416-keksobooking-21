@@ -3,24 +3,24 @@
 (function () {
   const announcements = [];
   const getAnnouncements = (data) => {
-    for (let announcement of data) {
-      const Announcement = {};
-      Announcement.title = announcement.offer.title;
-      Announcement.avatar = announcement.author.avatar;
-      Announcement.address = announcement.offer.address;
-      Announcement.price = announcement.offer.price;
-      Announcement.rooms = announcement.offer.rooms;
-      Announcement.guests = announcement.offer.guests;
-      Announcement.type = announcement.offer.type;
-      Announcement.checkin = announcement.offer.checkin;
-      Announcement.checkout = announcement.offer.checkout;
-      Announcement.features = announcement.offer.features;
-      Announcement.description = announcement.offer.description;
-      Announcement.photos = announcement.offer.photos;
-      Announcement.location = announcement.location;
-      Announcement.id = window.utils.getAvatarNumber(announcement.author.avatar);
+    for (let item of data) {
+      const announcement = {};
+      announcement.title = item.offer.title;
+      announcement.avatar = item.author.avatar;
+      announcement.address = item.offer.address;
+      announcement.price = item.offer.price;
+      announcement.rooms = item.offer.rooms;
+      announcement.guests = item.offer.guests;
+      announcement.type = item.offer.type;
+      announcement.checkin = item.offer.checkin;
+      announcement.checkout = item.offer.checkout;
+      announcement.features = item.offer.features;
+      announcement.description = item.offer.description;
+      announcement.photos = item.offer.photos;
+      announcement.location = item.location;
+      announcement.id = window.utils.getAvatarNumber(item.author.avatar);
 
-      announcements.push(Announcement);
+      announcements.push(announcement);
     }
   };
   const fillDomWithAnnouncements = (data) => {

@@ -52,6 +52,7 @@
     ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
     TIMEOUT_IN_MS: 10000,
     LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
+    UPLOAD_URL: `https://21.javascript.pages.academy/keksobooking`,
     FILTERED_PINS_AMOUNT: 5,
     CoordY: {
       MIN: 130,
