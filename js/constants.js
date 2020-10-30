@@ -28,6 +28,9 @@
       notFoundResponse: `Данные не найдены`,
       internalErrorResponse: `Произошла ошибка сервера`,
     },
+    SuccessMessages: {
+      dataSent: `Отправка данных прошла успешно!`
+    },
     VALID_FILE_TYPES: [
       `image/jpeg`,
       `image/png`,
