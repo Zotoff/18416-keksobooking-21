@@ -21,6 +21,10 @@
     mapPinButtonImage.setAttribute(`alt`, element.offer.title);
     mapPinButton.setAttribute(`data-id`, pinId);
     mapPinButton.setAttribute(`data-type`, element.offer.type);
+    mapPinButton.setAttribute(`data-price`, element.offer.price);
+    mapPinButton.setAttribute(`data-rooms`, element.offer.rooms);
+    mapPinButton.setAttribute(`data-guests`, element.offer.guests);
+    mapPinButton.setAttribute(`data-features`, element.offer.features);
     mapPinButton.setAttribute(`data-filter`, `filter`);
 
     return mapPinTemplate;

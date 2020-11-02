@@ -38,7 +38,9 @@
         window.pin.setupPins(filteredResponse);
         window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin`));
         window.pin.moveMainPin();
-        window.filter.filterTypes();
+        window.filter.handleFilters(filteredResponse);
+        // window.filter.filterTypes();
+        // window.filter.filterPrices();
         window.form.submitForm();
       };
       const onSuccess = (response) => {

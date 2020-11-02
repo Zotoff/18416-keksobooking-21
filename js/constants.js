@@ -28,6 +28,10 @@
       notFoundResponse: `Данные не найдены`,
       internalErrorResponse: `Произошла ошибка сервера`,
     },
+    PricesTypes: {
+      low: 10000,
+      middle: 50000
+    },
     SuccessMessages: {
       dataSent: `Отправка данных прошла успешно!`
     },
