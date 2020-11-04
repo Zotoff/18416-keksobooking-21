@@ -8,162 +8,124 @@
   const filterFormGuestsElement = filterForm.querySelector(`#housing-guests`);
   const filterFormFeaturesFieldSet = filterForm.querySelector(`#housing-features`);
 
-  let newType = `any`;
-  let newPriceType = `any`;
-  let newRooms = `any`;
-  let newGuests = `any`;
-  let newFeatures = [];
+  const filter = {
+    type: `any`,
+    price: `any`,
+    guests: `any`,
+    rooms: `any`,
+    features: []
+  };
 
   const handleFilters = (data) => {
     const dataToFilter = [];
-    for (let item of data) {
+    const filteredResponse = data.slice(0, window.constants.FILTERED_PINS_AMOUNT);
+    for (let item of filteredResponse) {
       dataToFilter.push(item);
     }
-
     const updateFilters = () => {
 
-      const filteredByType = (item) => {
-        if (item.offer.type === newType) {
-          return item;
-        } else if (item.offer.type === `any`) {
-          return item;
+      const filterTypes = (type, item) => {
+        switch (type) {
+          case `any`:
+            return item;
+          default:
+            if (item.offer.type === filter.type) {
+              return item;
+            } else {
+              return false;
+            }
         }
-        return item;
       };
-      const filteredByPrice = (item) => {
-        switch (newPriceType) {
+      const filterGuests = (guests, item) => {
+        switch (guests) {
+          case `any`:
+            return item;
+          default:
+            if (item.offer.guests === +filter.guests) {
+              return item;
+            } else {
+              return false;
+            }
+        }
+      };
+      const filterRooms = (rooms, item) => {
+        switch (rooms) {
+          case `any`:
+            return item;
+          default:
+            if (item.offer.rooms === +filter.rooms) {
+              return item;
+            } else {
+              return false;
+            }
+        }
+      };
+      const filterPrice = (price, item) => {
+        switch (price) {
           case `low`:
             if (item.offer.price < 10000) {
               return item;
+            } else {
+              return false;
             }
-            break;
           case `middle`:
-            if (item.offer.price >= 10000 && item.offer.price <= 50000) {
+            if (item.offer.price > 10000 && item.offer.price <= 50000) {
               return item;
+            } else {
+              return false;
             }
-            break;
           case `high`:
             if (item.offer.price > 50000) {
               return item;
+            } else {
+              return false;
             }
-            break;
           default:
             return item;
         }
-        return item;
       };
-
-      const filteredByRooms = (item) => {
-        if (item.offer.rooms === +newRooms) {
-          return item;
-        } else if (newRooms === `any`) {
-          return item;
-        }
-        return item;
+      const filterFeatures = (features, item) => {
+        let filteredItem = item.offer.features.filter((feature) => features.forEach((filterFeature) => filterFeature === feature));
+        return filteredItem;
       };
-
-      const filteredByGuests = (item) => {
-        if (item.offer.guests === +newGuests) {
-          return item;
-        } else if (newGuests === `any`) {
-          return item;
-        }
-        return item;
-      };
-
-      const filteredByFeatures = (item) => {
-        newFeatures.forEach((element) => {
-          item.offer.features.forEach((itemFeature) => {
-            if (itemFeature.indexOf(element.value) !== -1) {
-              return item;
-            }
-            return item;
-          });
-          return item;
-        });
-      };
-
-      const filteredFinal = dataToFilter.filter(filteredByType).filter(filteredByPrice).filter(filteredByRooms).filter(filteredByGuests).filter(filteredByFeatures);
-      return filteredFinal;
+      const filteredFinal = dataToFilter.filter((item) => filterTypes(filter.type, item) && filterGuests(filter.guests, item) && filterRooms(filter.rooms, item) && filterPrice(filter.price, item) && filterFeatures(filter.features, item));
+      window.card.getAnnouncements(filteredFinal);
+      window.pin.setupPins(filteredFinal);
+      window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin[type=button]`));
     };
     filterFormTypeElement.addEventListener(`change`, (evt) => {
       const type = evt.target.value;
-      newType = type;
-      updateFilters();
-    });
-    filterFormPriceELement.addEventListener(`change`, (evt) => {
-      const priceType = evt.target.value;
-      newPriceType = priceType;
+      filter.type = type;
       updateFilters();
     });
     filterFormRoomsElement.addEventListener(`change`, (evt) => {
       const rooms = evt.target.value;
-      newRooms = rooms;
+      filter.rooms = rooms;
       updateFilters();
     });
     filterFormGuestsElement.addEventListener(`change`, (evt) => {
       const guests = evt.target.value;
-      newGuests = guests;
+      filter.guests = guests;
+      updateFilters();
+    });
+    filterFormPriceELement.addEventListener(`change`, (evt) => {
+      const priceType = evt.target.value;
+      filter.price = priceType;
       updateFilters();
     });
     filterFormFeaturesFieldSet.addEventListener(`change`, () => {
       let featuresAmount = filterFormFeaturesFieldSet.querySelectorAll(`input:checked`);
-      const clickedFeatures = Array.from(featuresAmount);
-      newFeatures = clickedFeatures;
+      const clickedAmountsArray = Array.from(featuresAmount);
+      const clickedFeaturesArray = [];
+      clickedAmountsArray.forEach((amount) => {
+        const value = amount.value;
+        clickedFeaturesArray.push(value);
+      });
+      filter.features = clickedFeaturesArray;
       updateFilters();
     });
   };
-
-  const filterTypes = () => {
-    filterFormTypeElement.addEventListener(`change`, (evt) => {
-      const filterablePins = document.querySelectorAll(`.map__pin[data-filter=filter]`);
-      filterablePins.forEach((pin) => {
-        if (evt.target.value !== `any` && pin.dataset.type !== evt.target.value) {
-          pin.classList.add(`hidden`);
-          return true;
-        }
-        pin.classList.remove(`hidden`);
-        return pin;
-      });
-    });
-  };
-
-  const filterPrices = () => {
-    filterFormPriceELement.addEventListener(`change`, (evt) => {
-      evt.preventDefault();
-      const filterablePins = document.querySelectorAll(`.map__pin[data-filter=filter]`);
-      filterablePins.forEach((pin) => {
-        const pinPrice = +pin.dataset.price;
-        switch (evt.target.value) {
-          case `middle`:
-            if (pinPrice >= 50000 && pinPrice <= 10000) {
-              pin.classList.add(`hidden`);
-              return true;
-            }
-            break;
-          case `low`:
-            if (pinPrice > 10000) {
-              pin.classList.add(`hidden`);
-              return true;
-            }
-            break;
-          case `high`:
-            if (pinPrice > 50000) {
-              pin.classList.add(`hidden`);
-              return true;
-            }
-            break;
-          default:
-        }
-        return true;
-      });
-
-    });
-  };
-
   window.filter = {
-    filterTypes,
-    filterPrices,
     handleFilters
   };
 })();
