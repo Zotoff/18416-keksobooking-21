@@ -9,10 +9,10 @@
   const filterFormFeaturesFieldSet = filterForm.querySelector(`#housing-features`);
 
   const filter = {
-    type: `any`,
-    price: `any`,
-    guests: `any`,
-    rooms: `any`,
+    type: window.constants.FilterValues.any,
+    price: window.constants.FilterValues.any,
+    guests: window.constants.FilterValues.any,
+    rooms: window.constants.FilterValues.any,
     features: []
   };
 
@@ -26,7 +26,7 @@
 
       const filterTypes = (type, item) => {
         switch (type) {
-          case `any`:
+          case window.constants.FilterValues.any:
             return item;
           default:
             if (item.offer.type === filter.type) {
@@ -38,7 +38,7 @@
       };
       const filterGuests = (guests, item) => {
         switch (guests) {
-          case `any`:
+          case window.constants.FilterValues.any:
             return item;
           default:
             if (item.offer.guests === +filter.guests) {
@@ -50,7 +50,7 @@
       };
       const filterRooms = (rooms, item) => {
         switch (rooms) {
-          case `any`:
+          case window.constants.FilterValues.any:
             return item;
           default:
             if (item.offer.rooms === +filter.rooms) {
@@ -62,19 +62,19 @@
       };
       const filterPrice = (price, item) => {
         switch (price) {
-          case `low`:
+          case window.constants.FilterValues.low:
             if (item.offer.price < 10000) {
               return item;
             } else {
               return false;
             }
-          case `middle`:
+          case window.constants.FilterValues.middle:
             if (item.offer.price > 10000 && item.offer.price <= 50000) {
               return item;
             } else {
               return false;
             }
-          case `high`:
+          case window.constants.FilterValues.high:
             if (item.offer.price > 50000) {
               return item;
             } else {
@@ -85,8 +85,17 @@
         }
       };
       const filterFeatures = (features, item) => {
-        let filteredItem = item.offer.features.filter((feature) => features.forEach((filterFeature) => filterFeature === feature));
-        return filteredItem;
+        if (!features.length) {
+          return true;
+        }
+        let hasAllFeatures = true;
+        for (let i = 0; i < features.length; i++) {
+          if (!item.offer.features.includes(features[i])) {
+            hasAllFeatures = false;
+            break;
+          }
+        }
+        return hasAllFeatures;
       };
       const filteredFinal = dataToFilter.filter((item) => filterTypes(filter.type, item) && filterGuests(filter.guests, item) && filterRooms(filter.rooms, item) && filterPrice(filter.price, item) && filterFeatures(filter.features, item));
       window.card.getAnnouncements(filteredFinal);

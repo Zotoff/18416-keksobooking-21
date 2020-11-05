@@ -64,6 +64,12 @@
     CoordY: {
       MIN: 130,
       MAX: 630
+    },
+    FilterValues: {
+      any: `any`,
+      low: `low`,
+      middle: `middle`,
+      high: `high`,
     }
   };
 })();
