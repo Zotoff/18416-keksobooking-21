@@ -38,7 +38,7 @@
         window.pin.setupPins(filteredResponse);
         window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin`));
         window.pin.moveMainPin();
-        window.filter.filterTypes();
+        window.filter.handleFilters(data);
         window.form.submitForm();
       };
       const onSuccess = (response) => {

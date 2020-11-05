@@ -28,6 +28,13 @@
       notFoundResponse: `Данные не найдены`,
       internalErrorResponse: `Произошла ошибка сервера`,
     },
+    PricesTypes: {
+      low: 10000,
+      middle: 50000
+    },
+    SuccessMessages: {
+      dataSent: `Отправка данных прошла успешно!`
+    },
     VALID_FILE_TYPES: [
       `image/jpeg`,
       `image/png`,
@@ -57,6 +64,12 @@
     CoordY: {
       MIN: 130,
       MAX: 630
+    },
+    FilterValues: {
+      any: `any`,
+      low: `low`,
+      middle: `middle`,
+      high: `high`,
     }
   };
 })();

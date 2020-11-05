@@ -17,6 +17,7 @@
   const avatarFieldSet = adFormElement.querySelector(`.ad-form-header`);
   const imagesFieldSet = adFormElement.querySelector(`.ad-form__photo-container`).parentNode;
   const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
+  const adoFormClearBtn = adFormElement.querySelector(`.ad-form__reset`);
   const adFeatures = [];
 
   const makeItemInvalid = (item, validityState) => {
@@ -34,24 +35,20 @@
   };
 
   const checkFileTypeValidity = (fileInput, fieldSetSelector) => {
-    if (fileInput.files.length === 0) {
-      makeFileItemInvalid(fileInput, fieldSetSelector, window.constants.ErrorMessages.noFilesSelected);
-    } else {
-      for (let file of fileInput.files) {
-        window.constants.VALID_FILE_TYPES.forEach((type) => {
-          if (file.type === type) {
-            window.utils.removeRedBorder(fileInput);
-            fileInput.setCustomValidity(``);
-            fieldSetSelector.setAttribute(`valid`, `true`);
-          }
-          makeFileItemInvalid(fileInput, fieldSetSelector, window.constants.ErrorMessages.wrongTypeOfFile);
-        });
-      }
-      window.utils.removeRedBorder(fileInput);
-      fieldSetSelector.setAttribute(`valid`, true);
-      fileInput.setCustomValidity(``);
-      adFormElement.reportValidity();
+    for (let file of fileInput.files) {
+      window.constants.VALID_FILE_TYPES.forEach((type) => {
+        if (file.type === type) {
+          window.utils.removeRedBorder(fileInput);
+          fileInput.setCustomValidity(``);
+          fieldSetSelector.setAttribute(`valid`, `true`);
+        }
+        makeFileItemInvalid(fileInput, fieldSetSelector, window.constants.ErrorMessages.wrongTypeOfFile);
+      });
     }
+    window.utils.removeRedBorder(fileInput);
+    fieldSetSelector.setAttribute(`valid`, true);
+    fileInput.setCustomValidity(``);
+    adFormElement.reportValidity();
     return true;
   };
 
@@ -87,18 +84,40 @@
     }
   };
 
+  const clearFormElements = (selectors) => {
+    selectors.forEach((selector) => {
+      selector.value = ``;
+    });
+  };
+
   const onSuccess = () => {
     const FRAGMENT = window.utils.fragment;
     const mainElement = document.querySelector(`main`);
     const successElement = document.querySelector(`#success`).content;
-    const successMessage = `Отправка данных прошла успешно`;
+    const successMessage = window.constants.SuccessMessages.dataSent;
 
     const successTemplate = successElement.cloneNode(true);
     const successMessageElement = successTemplate.querySelector(`.success__message`);
-    successMessageElement.innerHTML = `<p>${successMessage}</p>`;
+    successMessageElement.innerText = `${successMessage}`;
 
     FRAGMENT.appendChild(successTemplate);
-    mainElement.insertAdjacentElement(`afterBegin`, FRAGMENT);
+    mainElement.append(FRAGMENT);
+
+    const successSelector = document.querySelector(`.success`);
+
+    const removeSuccess = () => {
+      successSelector.remove();
+    };
+
+    document.addEventListener(`keydown`, (evt) => {
+      removeSuccess();
+      window.utils.checkKeyDownEvent(evt, `Escape`, removeSuccess);
+    });
+
+    document.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      removeSuccess();
+    });
 
   };
   const onError = (message) => {
@@ -115,25 +134,25 @@
 
     const errorSelector = document.querySelector(`.error`);
 
-    const hideError = () => {
-      errorSelector.classList.add(`hidden`);
+    const removeError = () => {
+      errorSelector.remove();
     };
 
     const errorButton = errorSelector.querySelector(`.error__button`);
 
     document.addEventListener(`keydown`, (evt) => {
-      hideError();
-      window.utils.checkKeyDownEvent(evt, `Escape`, hideError);
+      removeError();
+      window.utils.checkKeyDownEvent(evt, `Escape`, removeError);
     });
 
     document.addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      hideError();
+      removeError();
     });
 
     errorButton.addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      hideError();
+      removeError();
     });
   };
 
@@ -190,6 +209,10 @@
           adFeatures.push(feature.value);
         });
       });
+      adoFormClearBtn.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        clearFormElements([adFormTitle, adFormPrice, adFormDescription, adFormAvatar, adFormImages, adFormFeatures]);
+      });
     },
     checkFormValidity() {
       checkInputValidity(adFormTitle);
@@ -216,17 +239,7 @@
         this.checkFormValidity();
         const fieldSets = adFormElement.querySelectorAll(`fieldset[valid=false]`);
         if (!fieldSets.length) {
-          const formData = new FormData();
-          formData.append(`price`, adFormPrice.value);
-          formData.append(`title`, adFormTitle.value);
-          formData.append(`type`, adFormType.value);
-          formData.append(`rooms`, adFormRoom.value);
-          formData.append(`guests`, adFormCapacity.value);
-          formData.append(`address`, adFormAddressElement.value);
-          formData.append(`checkin`, adFormCheckIn.value);
-          formData.append(`checkout`, adFormCheckOut.value);
-          formData.append(`description`, adFormDescription.value);
-          formData.append(`features`, adFeatures);
+          const formData = new FormData(document.querySelector(`.ad-form`));
           submitAdForm(formData);
         }
       });

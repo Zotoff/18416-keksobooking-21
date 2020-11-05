@@ -12,20 +12,20 @@
     const mapPinTemplate = mapPinElement.cloneNode(true);
     const mapPinButton = mapPinTemplate.querySelector(`.map__pin`);
     const mapPinButtonImage = mapPinTemplate.querySelector(`img`);
-
     const pinId = window.utils.getAvatarNumber(element.author.avatar);
-
     mapPinButton.style.left = `${element.location.x}px`;
     mapPinButton.style.top = `${element.location.y + 35}px`;
     mapPinButtonImage.src = element.author.avatar;
     mapPinButtonImage.setAttribute(`alt`, element.offer.title);
     mapPinButton.setAttribute(`data-id`, pinId);
-    mapPinButton.setAttribute(`data-type`, element.offer.type);
-    mapPinButton.setAttribute(`data-filter`, `filter`);
 
     return mapPinTemplate;
   };
   const fillDomWithPins = (pins) => {
+    const pinsToRemove = document.querySelectorAll(`.map__pin[type=button]`);
+    pinsToRemove.forEach((pin) => {
+      pin.remove();
+    });
     pins.forEach((pin) => {
       FRAGMENT.appendChild(generateMapPinElement(pin));
     });
@@ -123,7 +123,6 @@
           mainPinElement.style.left = currentCoords.x + `px`;
 
           const mapPinEdgeYValue = Math.floor(currentCoords.y + window.constants.ACTIVE_MAP_PIN_SIZE);
-          // const mapPinEdgeYValue = Math.floor(currentCoords.y - (window.constants.ACTIVE_MAP_PIN_SIZE + window.constants.ACTIVE_MAP_PIN_EDGE_HEIGHT));
           const mapPinEdgeXValue = Math.floor(currentCoords.x + (window.constants.ACTIVE_MAP_PIN_SIZE / 2));
 
           window.form.setAddress(`work`, mapPinEdgeXValue, mapPinEdgeYValue);
