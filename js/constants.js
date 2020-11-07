@@ -7,6 +7,15 @@ window.constants = {
   TIMES_VALUES: [`12:00`, `13:00`, `14:00`],
   GUESTS_VALUES: [`1`, `2`, `3`, `0`],
   ROOMS_VALUES: [`1`, `2`, `3`, `100`],
+  FILE_TYPES: [`gif`, `jpg`, `jpeg`, `png`],
+  MAX_ANNOUNCEMENTS: 8,
+  ROUND_MAP_PIN_SIZE: 62,
+  ACTIVE_MAP_PIN_SIZE: 62,
+  ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
+  TIMEOUT_IN_MS: 10000,
+  LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
+  UPLOAD_URL: `https://21.javascript.pages.academy/keksobooking`,
+  FILTERED_PINS_AMOUNT: 5,
   ErrorMessages: {
     valueMissing: `Пожалуйста, заполните форму!`,
     wrongRoom: `Вы выбрали количество мест, не соответствующее количеству гостей`,
@@ -53,14 +62,6 @@ window.constants = {
     House: `house`,
     Flat: `flat`
   },
-  MAX_ANNOUNCEMENTS: 8,
-  ROUND_MAP_PIN_SIZE: 62,
-  ACTIVE_MAP_PIN_SIZE: 62,
-  ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
-  TIMEOUT_IN_MS: 10000,
-  LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
-  UPLOAD_URL: `https://21.javascript.pages.academy/keksobooking`,
-  FILTERED_PINS_AMOUNT: 5,
   CoordY: {
     MIN: 130,
     MAX: 630

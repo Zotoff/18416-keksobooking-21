@@ -1,6 +1,5 @@
 "use strict";
 
-
 const adFormElement = document.forms[1];
 const adFormTitle = adFormElement.title;
 const adFormType = adFormElement.type;
@@ -14,6 +13,8 @@ const adFormAvatar = adFormElement.avatar;
 const adFormImages = adFormElement.images;
 const adFormFeatures = adFormElement.features;
 const adFormDescription = adFormElement.description;
+const adFormHeaderPreview = adFormElement.querySelector(`.ad-form-header__preview`);
+const adFormImagesPreview = adFormElement.querySelector(`.ad-form__photo`);
 const avatarFieldSet = adFormElement.querySelector(`.ad-form-header`);
 const imagesFieldSet = adFormElement.querySelector(`.ad-form__photo-container`).parentNode;
 const adFormSubmitBtn = adFormElement.querySelector(`button[type=submit]`);
@@ -48,7 +49,6 @@ const checkFileTypeValidity = (fileInput, fieldSetSelector) => {
   window.utils.removeRedBorder(fileInput);
   fieldSetSelector.setAttribute(`valid`, true);
   fileInput.setCustomValidity(``);
-  adFormElement.reportValidity();
   return true;
 };
 
@@ -185,6 +185,52 @@ const submitAdForm = (formData) => {
   window.network.upload(formData, onSuccess, onError);
 };
 
+const loadImagesPreviews = (fileHandler, previewSelector) => {
+  let picReader = new FileReader();
+  picReader.addEventListener(`load`, (evt) => {
+    const picFile = evt.target;
+    const div = document.createElement(`div`);
+    div.className = `ad-form__photo__preview`;
+    div.innerHTML = `<img src="${picFile.result}" title="${picFile.name}" width="25" height="25"/>`;
+    previewSelector.insertBefore(div, null);
+  });
+  picReader.readAsDataURL(fileHandler);
+};
+
+const loadAvatarPreview = (fileHandler) => {
+  let picReader = new FileReader();
+  picReader.addEventListener(`load`, (evt) => {
+    const picFile = evt.target;
+    const avatarPreviewImage = adFormHeaderPreview.querySelector(`img`);
+    avatarPreviewImage.src = `${picFile.result}`;
+    avatarPreviewImage.alt = `${picFile.name}`;
+  });
+  picReader.readAsDataURL(fileHandler);
+};
+
+adFormImages.addEventListener(`change`, (evt) => {
+  let files = evt.target.files;
+  adFormImagesPreview.innerHTML = ``;
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+    if (!file.type.match(`image`)) {
+      continue;
+    }
+    loadImagesPreviews(file, adFormImagesPreview);
+  }
+});
+
+adFormAvatar.addEventListener(`change`, (evt) => {
+  let files = evt.target.files;
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+    if (!file.type.match(`image`)) {
+      continue;
+    }
+    loadAvatarPreview(file);
+  }
+});
+
 window.form = {
   adFormElement,
   adFormElementFieldsets: adFormElement.querySelectorAll(`fieldset`),
@@ -213,13 +259,17 @@ window.form = {
       evt.preventDefault();
       clearFormElements([adFormTitle, adFormPrice, adFormDescription, adFormAvatar, adFormImages, adFormFeatures]);
     });
+    adFormAvatar.addEventListener(`change`, () => {
+      checkFileTypeValidity(adFormAvatar, avatarFieldSet, adFormHeaderPreview, false);
+    });
+    adFormImages.addEventListener(`change`, () => {
+      checkFileTypeValidity(adFormImages, imagesFieldSet, adFormImagesPreview, true);
+    });
   },
   checkFormValidity() {
     checkInputValidity(adFormTitle);
     checkInputValidity(adFormPrice);
     checkInputValidity(adFormAddressElement);
-    checkFileTypeValidity(adFormAvatar, avatarFieldSet);
-    checkFileTypeValidity(adFormImages, imagesFieldSet);
   },
   interactWithForm() {
     checkInputValidity(adFormTitle);
