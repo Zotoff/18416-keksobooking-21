@@ -790,6 +790,29 @@ fieldset {
 
   background-color: #e4e4de;
   border-radius: 5px;
+
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  overflow-y: scroll;
+}
+
+.ad-form__photo__preview {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
 }
 
 .ad-form__element--submit {

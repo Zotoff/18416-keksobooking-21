@@ -1,6 +1,5 @@
 "use strict";
 
-
 const adFormElement = document.forms[1];
 const adFormTitle = adFormElement.title;
 const adFormType = adFormElement.type;
@@ -14,7 +13,7 @@ const adFormAvatar = adFormElement.avatar;
 const adFormImages = adFormElement.images;
 const adFormFeatures = adFormElement.features;
 const adFormDescription = adFormElement.description;
-const adFormHeaderPreview = adFormElement.querySelector(`.ad-form-header__preview img`);
+const adFormHeaderPreview = adFormElement.querySelector(`.ad-form-header__preview`);
 const adFormImagesPreview = adFormElement.querySelector(`.ad-form__photo`);
 const avatarFieldSet = adFormElement.querySelector(`.ad-form-header`);
 const imagesFieldSet = adFormElement.querySelector(`.ad-form__photo-container`).parentNode;
@@ -36,7 +35,7 @@ const makeFileItemInvalid = (item, fieldSetSelector, validityState) => {
   adFormElement.reportValidity();
 };
 
-const checkFileTypeValidity = (fileInput, fieldSetSelector, previewBlock, images) => {
+const checkFileTypeValidity = (fileInput, fieldSetSelector) => {
   for (let file of fileInput.files) {
     window.constants.VALID_FILE_TYPES.forEach((type) => {
       if (file.type === type) {
@@ -50,14 +49,6 @@ const checkFileTypeValidity = (fileInput, fieldSetSelector, previewBlock, images
   window.utils.removeRedBorder(fileInput);
   fieldSetSelector.setAttribute(`valid`, true);
   fileInput.setCustomValidity(``);
-  switch (images) {
-    case true:
-      loadImages(fileInput, previewBlock);
-      break;
-    default:
-      loadAvatar(fileInput, previewBlock);
-  }
-  adFormElement.reportValidity();
   return true;
 };
 
@@ -194,24 +185,51 @@ const submitAdForm = (formData) => {
   window.network.upload(formData, onSuccess, onError);
 };
 
-const loadAvatar = (fileInput, previewBlock) => {
-  const file = fileInput.files[0];
-  const reader = new FileReader();
-  reader.addEventListener(`load`, () => {
-    previewBlock.src = reader.result;
+const loadImagesPreviews = (fileHandler, previewSelector) => {
+  let picReader = new FileReader();
+  picReader.addEventListener(`load`, (evt) => {
+    const picFile = evt.target;
+    const div = document.createElement(`div`);
+    div.className = `ad-form__photo__preview`;
+    div.innerHTML = `<img src="${picFile.result}" title="${picFile.name}" width="25" height="25"/>`;
+    previewSelector.insertBefore(div, null);
   });
-  reader.readAsDataURL(file);
+  picReader.readAsDataURL(fileHandler);
 };
-const loadImages = (fileInput, previewBlock) => {
-  const file = fileInput.files[0];
-  const reader = new FileReader();
-  reader.addEventListener(`load`, () => {
-    const previewImage = document.createElement(`img`);
-    previewImage.setAttribute(`src`, reader.result);
-    previewBlock.append(previewImage);
-    reader.readAsDataURL(file);
+
+const loadAvatarPreview = (fileHandler) => {
+  let picReader = new FileReader();
+  picReader.addEventListener(`load`, (evt) => {
+    const picFile = evt.target;
+    const avatarPreviewImage = adFormHeaderPreview.querySelector(`img`);
+    avatarPreviewImage.src = `${picFile.result}`;
+    avatarPreviewImage.alt = `${picFile.name}`;
   });
+  picReader.readAsDataURL(fileHandler);
 };
+
+adFormImages.addEventListener(`change`, (evt) => {
+  let files = evt.target.files;
+  adFormImagesPreview.innerHTML = ``;
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+    if (!file.type.match(`image`)) {
+      continue;
+    }
+    loadImagesPreviews(file, adFormImagesPreview);
+  }
+});
+
+adFormAvatar.addEventListener(`change`, (evt) => {
+  let files = evt.target.files;
+  for (let i = 0; i < files.length; i++) {
+    let file = files[i];
+    if (!file.type.match(`image`)) {
+      continue;
+    }
+    loadAvatarPreview(file);
+  }
+});
 
 window.form = {
   adFormElement,
