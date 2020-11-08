@@ -14,10 +14,30 @@ const initialSetup = () => {
   });
 };
 
+const makeMapInactive = () => {
+  mapElement.classList.add(`map--faded`);
+  mapFiltersForm.setAttribute(`disabled`, `true`);
+
+  const mainPin = document.querySelector(`.map__pin`);
+
+  mainPin.style.left = window.constants.MapInitialCoords.x + `px`;
+  mainPin.style.top = window.constants.MapInitialCoords.y + `px`;
+
+  window.form.setAddress(`initial`, window.constants.MapInitialCoords.x, window.constants.MapInitialCoords.y);
+
+  window.form.disableForm();
+  const mapPins = document.querySelectorAll(`button[type=button].map__pin`);
+  mapPins.forEach((pin) => {
+    pin.remove();
+  });
+
+};
+
 window.map = {
   mapSelector: mapElement,
   mapFiltersContainer: mapFiltersContainerElement,
   initialSetup,
+  makeMapInactive,
   setMapActive() {
     mapFiltersForm.removeAttribute(`disabled`);
     window.form.adFormElementFieldsets.forEach((element) => {
@@ -51,7 +71,6 @@ window.map = {
   },
   workWithActiveMap() {
     window.pin.moveMainPin();
-    window.filter.filterTypes();
     window.form.submitForm();
   }
 };

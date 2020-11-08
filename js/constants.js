@@ -16,6 +16,16 @@ window.constants = {
   LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
   UPLOAD_URL: `https://21.javascript.pages.academy/keksobooking`,
   FILTERED_PINS_AMOUNT: 5,
+  VALID_FILE_TYPES: [
+    `image/jpeg`,
+    `image/png`,
+    `image/jpg`
+  ],
+  DEBOUNCE_INTERVAL: 500,
+  MapInitialCoords: {
+    x: 570,
+    y: 375
+  },
   ErrorMessages: {
     valueMissing: `Пожалуйста, заполните форму!`,
     wrongRoom: `Вы выбрали количество мест, не соответствующее количеству гостей`,
@@ -44,11 +54,6 @@ window.constants = {
   SuccessMessages: {
     dataSent: `Отправка данных прошла успешно!`
   },
-  VALID_FILE_TYPES: [
-    `image/jpeg`,
-    `image/png`,
-    `image/jpg`
-  ],
   ResponseStatuses: {
     successResponse: 200,
     wrongResponse: 400,

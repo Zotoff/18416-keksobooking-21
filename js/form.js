@@ -91,6 +91,7 @@ const clearFormElements = (selectors) => {
 };
 
 const onSuccess = () => {
+
   const FRAGMENT = window.utils.fragment;
   const mainElement = document.querySelector(`main`);
   const successElement = document.querySelector(`#success`).content;
@@ -103,10 +104,12 @@ const onSuccess = () => {
   FRAGMENT.appendChild(successTemplate);
   mainElement.append(FRAGMENT);
 
-  const successSelector = document.querySelector(`.success`);
+  const successSelector = document.querySelectorAll(`.success`);
 
   const removeSuccess = () => {
-    successSelector.remove();
+    successSelector.forEach((item) => {
+      item.remove();
+    });
   };
 
   document.addEventListener(`keydown`, (evt) => {
@@ -118,6 +121,8 @@ const onSuccess = () => {
     evt.preventDefault();
     removeSuccess();
   });
+
+  window.map.makeMapInactive();
 
 };
 const onError = (message) => {
@@ -231,6 +236,20 @@ adFormAvatar.addEventListener(`change`, (evt) => {
   }
 });
 
+const disableForm = () => {
+  adFormElement.querySelectorAll(`fieldset`).forEach((fieldset) => {
+    fieldset.setAttribute(`disabled`, `true`);
+  });
+  const houseImages = Array.from(adFormImagesPreview.childNodes);
+  const avatarImage = adFormHeaderPreview.querySelector(`img`);
+  houseImages.forEach((image) => {
+    image.remove();
+  });
+  avatarImage.src = `img/muffin-grey.svg`;
+  clearFormElements([adFormTitle, adFormPrice, adFormDescription, adFormAvatar, adFormImages, adFormFeatures]);
+  adFormElement.classList.add(`ad-form--disabled`);
+};
+
 window.form = {
   adFormElement,
   adFormElementFieldsets: adFormElement.querySelectorAll(`fieldset`),
@@ -257,7 +276,7 @@ window.form = {
     });
     adoFormClearBtn.addEventListener(`click`, (evt) => {
       evt.preventDefault();
-      clearFormElements([adFormTitle, adFormPrice, adFormDescription, adFormAvatar, adFormImages, adFormFeatures]);
+      window.map.makeMapInactive();
     });
     adFormAvatar.addEventListener(`change`, () => {
       checkFileTypeValidity(adFormAvatar, avatarFieldSet, adFormHeaderPreview, false);
@@ -294,6 +313,7 @@ window.form = {
       }
     });
   },
-  setAddress
+  setAddress,
+  disableForm
 };
 

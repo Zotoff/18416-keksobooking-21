@@ -104,22 +104,22 @@ const handleFilters = (data) => {
   filterFormTypeElement.addEventListener(`change`, (evt) => {
     const type = evt.target.value;
     filter.type = type;
-    updateFilters();
+    window.debounce(updateFilters);
   });
   filterFormRoomsElement.addEventListener(`change`, (evt) => {
     const rooms = evt.target.value;
     filter.rooms = rooms;
-    updateFilters();
+    window.debounce(updateFilters);
   });
   filterFormGuestsElement.addEventListener(`change`, (evt) => {
     const guests = evt.target.value;
     filter.guests = guests;
-    updateFilters();
+    window.debounce(updateFilters);
   });
   filterFormPriceELement.addEventListener(`change`, (evt) => {
     const priceType = evt.target.value;
     filter.price = priceType;
-    updateFilters();
+    window.debounce(updateFilters);
   });
   filterFormFeaturesFieldSet.addEventListener(`change`, () => {
     let featuresAmount = filterFormFeaturesFieldSet.querySelectorAll(`input:checked`);
@@ -130,7 +130,7 @@ const handleFilters = (data) => {
       clickedFeaturesArray.push(value);
     });
     filter.features = clickedFeaturesArray;
-    updateFilters();
+    window.debounce(updateFilters);
   });
 };
 window.filter = {
