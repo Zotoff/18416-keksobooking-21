@@ -12,7 +12,6 @@ const adFormCapacity = adFormElement.capacity;
 const adFormAvatar = adFormElement.avatar;
 const adFormImages = adFormElement.images;
 const adFormFeatures = adFormElement.features;
-const adFormDescription = adFormElement.description;
 const adFormHeaderPreview = adFormElement.querySelector(`.ad-form-header__preview`);
 const adFormImagesPreview = adFormElement.querySelector(`.ad-form__photo`);
 const avatarFieldSet = adFormElement.querySelector(`.ad-form-header`);
@@ -84,81 +83,55 @@ const checkInputValidity = (item) => {
   }
 };
 
-const clearFormElements = (selectors) => {
-  selectors.forEach((selector) => {
-    selector.value = ``;
-  });
+const showMessage = (status) => {
+  const successModals = document.querySelectorAll(`.success`);
+
+  if (successModals) {
+    successModals.forEach((modal) => {
+      modal.remove();
+    });
+  }
+
+  const message = document.querySelector(`#${status}`).content.cloneNode(true);
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(message);
+  document.querySelector(`main`).appendChild(fragment);
+
+
+  const hideMessage = () => {
+    const statusSelector = document.querySelector(`.${status}`);
+    if (statusSelector !== null) {
+      document.querySelector(`main`).removeChild(document.querySelector(`.${status}`));
+      document.removeEventListener(`click`, onMessageClick);
+      document.removeEventListener(`keydown`, onMessageEsc);
+    }
+  };
+
+  const onMessageEsc = (evt) => {
+    if (evt.key === window.constants.ESCAPE) {
+      evt.preventDefault();
+      hideMessage();
+    }
+  };
+
+  const onMessageClick = () => {
+    hideMessage();
+  };
+
+  document.querySelector(`.${status}`).addEventListener(`click`, onMessageClick);
+  document.addEventListener(`click`, onMessageClick);
+  document.addEventListener(`keydown`, onMessageEsc);
 };
 
 const onSuccess = () => {
 
-  const FRAGMENT = window.utils.fragment;
-  const mainElement = document.querySelector(`main`);
-  const successElement = document.querySelector(`#success`).content;
-  const successMessage = window.constants.SuccessMessages.dataSent;
-
-  const successTemplate = successElement.cloneNode(true);
-  const successMessageElement = successTemplate.querySelector(`.success__message`);
-  successMessageElement.innerText = `${successMessage}`;
-
-  FRAGMENT.appendChild(successTemplate);
-  mainElement.append(FRAGMENT);
-
-  const successSelector = document.querySelectorAll(`.success`);
-
-  const removeSuccess = () => {
-    successSelector.forEach((item) => {
-      item.remove();
-    });
-  };
-
-  document.addEventListener(`keydown`, (evt) => {
-    removeSuccess();
-    window.utils.checkKeyDownEvent(evt, `Escape`, removeSuccess);
-  });
-
-  document.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    removeSuccess();
-  });
-
+  showMessage(`success`);
   window.map.makeMapInactive();
 
 };
-const onError = (message) => {
-  const FRAGMENT = window.utils.fragment;
-  const mainElement = document.querySelector(`main`);
-  const errorElement = document.querySelector(`#error`).content;
-
-  const errorTemplate = errorElement.cloneNode(true);
-  const errorMessage = errorElement.querySelector(`.error__message`);
-  errorMessage.innerText = `${message}`;
-
-  FRAGMENT.appendChild(errorTemplate);
-  mainElement.append(FRAGMENT);
-
-  const errorSelector = document.querySelector(`.error`);
-
-  const removeError = () => {
-    errorSelector.remove();
-  };
-
-  const errorButton = errorSelector.querySelector(`.error__button`);
-
-  document.addEventListener(`keydown`, (evt) => {
-    removeError();
-    window.utils.checkKeyDownEvent(evt, `Escape`, removeError);
-  });
-
-  document.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    removeError();
-  });
-
-  errorButton.addEventListener(`click`, (evt) => {
-    evt.preventDefault();
-    removeError();
-  });
+const onError = () => {
+  showMessage(`error`);
+  window.map.makeMapInactive();
 };
 
 const setAddress = (toggler, coordX, coordY) => {
@@ -176,11 +149,11 @@ const setAddress = (toggler, coordX, coordY) => {
     const calculatedXCoord = calculateMapPinEdgeCoord(`x`, coordX, window.constants.ACTIVE_MAP_PIN_SIZE);
     const calculatedYCoord = calculateMapPinEdgeCoord(`y`, coordY, window.constants.ACTIVE_MAP_PIN_SIZE);
 
-    const coordMessage = `${calculatedXCoord} ${calculatedYCoord}`;
+    const coordMessage = `${calculatedXCoord}, ${calculatedYCoord}`;
     adFormAddressElement.setAttribute(`value`, coordMessage);
   }
   if (toggler === `work`) {
-    const coordMessage = `${coordX} ${coordY}`;
+    const coordMessage = `${coordX}, ${coordY}`;
     adFormAddressElement.setAttribute(`value`, coordMessage);
   }
   adFormAddressElement.setAttribute(`readonly`, `readonly`);
@@ -237,16 +210,18 @@ adFormAvatar.addEventListener(`change`, (evt) => {
 });
 
 const disableForm = () => {
-  adFormElement.querySelectorAll(`fieldset`).forEach((fieldset) => {
-    fieldset.setAttribute(`disabled`, `true`);
-  });
+  adFormElement.reset();
+  window.filter.filterForm.reset();
   const houseImages = Array.from(adFormImagesPreview.childNodes);
   const avatarImage = adFormHeaderPreview.querySelector(`img`);
   houseImages.forEach((image) => {
     image.remove();
   });
   avatarImage.src = `img/muffin-grey.svg`;
-  clearFormElements([adFormTitle, adFormPrice, adFormDescription, adFormAvatar, adFormImages, adFormFeatures]);
+  adFormElement.querySelectorAll(`fieldset`).forEach((fieldset) => {
+    fieldset.setAttribute(`disabled`, `true`);
+  });
+  window.card.removeCardElements();
   adFormElement.classList.add(`ad-form--disabled`);
 };
 

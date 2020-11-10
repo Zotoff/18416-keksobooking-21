@@ -1,11 +1,11 @@
 "use strict";
 
 const filterForm = document.forms[0];
-const filterFormTypeElement = filterForm.querySelector(`#housing-type`);
-const filterFormPriceELement = filterForm.querySelector(`#housing-price`);
-const filterFormRoomsElement = filterForm.querySelector(`#housing-rooms`);
-const filterFormGuestsElement = filterForm.querySelector(`#housing-guests`);
-const filterFormFeaturesFieldSet = filterForm.querySelector(`#housing-features`);
+const filterFormType = filterForm.querySelector(`#housing-type`);
+const filterFormPrice = filterForm.querySelector(`#housing-price`);
+const filterFormRooms = filterForm.querySelector(`#housing-rooms`);
+const filterFormGuests = filterForm.querySelector(`#housing-guests`);
+const filterFormFeatures = filterForm.querySelector(`#housing-features`);
 
 const filter = {
   type: window.constants.FilterValues.any,
@@ -62,19 +62,19 @@ const handleFilters = (data) => {
     const filterPrice = (price, item) => {
       switch (price) {
         case window.constants.FilterValues.low:
-          if (item.offer.price < 10000) {
+          if (item.offer.price < window.constants.PricesTypes.low) {
             return item;
           } else {
             return false;
           }
         case window.constants.FilterValues.middle:
-          if (item.offer.price > 10000 && item.offer.price <= 50000) {
+          if (item.offer.price > window.constants.PricesTypes.low && item.offer.price <= window.constants.PricesTypes.middle) {
             return item;
           } else {
             return false;
           }
         case window.constants.FilterValues.high:
-          if (item.offer.price > 50000) {
+          if (item.offer.price > window.constants.PricesTypes.middle) {
             return item;
           } else {
             return false;
@@ -98,31 +98,28 @@ const handleFilters = (data) => {
     };
     const filteredFinal = dataToFilter.filter((item) => filterTypes(filter.type, item) && filterGuests(filter.guests, item) && filterRooms(filter.rooms, item) && filterPrice(filter.price, item) && filterFeatures(filter.features, item));
     window.card.getAnnouncements(filteredFinal);
+    window.card.removeCardElements();
     window.pin.setupPins(filteredFinal);
     window.pin.handlePinsAndCards(document.querySelectorAll(`.map__pin[type=button]`));
   };
-  filterFormTypeElement.addEventListener(`change`, (evt) => {
-    const type = evt.target.value;
-    filter.type = type;
+  filterFormType.addEventListener(`change`, (evt) => {
+    filter.type = evt.target.value;
     window.debounce(updateFilters);
   });
-  filterFormRoomsElement.addEventListener(`change`, (evt) => {
-    const rooms = evt.target.value;
-    filter.rooms = rooms;
+  filterFormRooms.addEventListener(`change`, (evt) => {
+    filter.rooms = evt.target.value;
     window.debounce(updateFilters);
   });
-  filterFormGuestsElement.addEventListener(`change`, (evt) => {
-    const guests = evt.target.value;
-    filter.guests = guests;
+  filterFormGuests.addEventListener(`change`, (evt) => {
+    filter.guests = evt.target.value;
     window.debounce(updateFilters);
   });
-  filterFormPriceELement.addEventListener(`change`, (evt) => {
-    const priceType = evt.target.value;
-    filter.price = priceType;
+  filterFormPrice.addEventListener(`change`, (evt) => {
+    filter.price = evt.target.value;
     window.debounce(updateFilters);
   });
-  filterFormFeaturesFieldSet.addEventListener(`change`, () => {
-    let featuresAmount = filterFormFeaturesFieldSet.querySelectorAll(`input:checked`);
+  filterFormFeatures.addEventListener(`change`, () => {
+    let featuresAmount = filterFormFeatures.querySelectorAll(`input:checked`);
     const clickedAmountsArray = Array.from(featuresAmount);
     const clickedFeaturesArray = [];
     clickedAmountsArray.forEach((amount) => {
@@ -134,5 +131,6 @@ const handleFilters = (data) => {
   });
 };
 window.filter = {
-  handleFilters
+  handleFilters,
+  filterForm
 };

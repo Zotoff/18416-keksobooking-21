@@ -65,26 +65,10 @@ const handlePinsAndCards = (pins) => {
           window.card.fillDomWithAnnouncements(announcement);
         }
       });
-      window.card.handleCardEvents();
     });
   });
 };
-const renderFilteredPins = (title) => {
-  let filteredPins = Array.from(mapPinsElement.querySelectorAll(`.map__pin`));
-  let filteredPinsWithoutMain = filteredPins.slice(1, window.constants.FILTERED_PINS_AMOUNT + 1);
-  filteredPinsWithoutMain.forEach((pin) => {
-    if (title === pin.querySelector(`img`).alt) {
-      pin.classList.remove(`hidden`);
-      return true;
-    }
-    if (title === `all`) {
-      pin.classList.remove(`hidden`);
-      return true;
-    }
-    pin.classList.add(`hidden`);
-    return true;
-  });
-};
+
 
 const moveMainPin = () => {
   mainPinElement.addEventListener(`mousedown`, (evt) => {
@@ -148,7 +132,6 @@ window.pin = {
   initiatePins,
   handleMainPin,
   handlePinsAndCards,
-  renderFilteredPins,
   moveMainPin
 };
 

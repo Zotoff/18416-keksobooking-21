@@ -24,7 +24,7 @@ const makeMapInactive = () => {
   mainPin.style.top = window.constants.MapInitialCoords.y + `px`;
 
   window.form.setAddress(`initial`, window.constants.MapInitialCoords.x, window.constants.MapInitialCoords.y);
-
+  window.card.removeCardElements();
   window.form.disableForm();
   const mapPins = document.querySelectorAll(`button[type=button].map__pin`);
   mapPins.forEach((pin) => {
@@ -49,7 +49,7 @@ window.map = {
     const mapPinActiveXCoord = window.utils.removeSymbolsFromString(mapPinActiveX, 2);
     const mapPinActiveYCoord = window.utils.removeSymbolsFromString(mapPinActiveY, 2);
 
-    window.form.setAddress(`work`, mapPinActiveXCoord, mapPinActiveYCoord);
+    window.form.setAddress(`initial`, mapPinActiveXCoord, mapPinActiveYCoord);
 
     const handleResponse = (data) => {
       const filteredResponse = data.slice(0, window.constants.FILTERED_PINS_AMOUNT);

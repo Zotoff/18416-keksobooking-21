@@ -13,6 +13,7 @@ window.constants = {
   ACTIVE_MAP_PIN_SIZE: 62,
   ACTIVE_MAP_PIN_EDGE_HEIGHT: 20,
   TIMEOUT_IN_MS: 10000,
+  ESCAPE: `Escape`,
   LOAD_URL: `https://21.javascript.pages.academy/keksobooking/data`,
   UPLOAD_URL: `https://21.javascript.pages.academy/keksobooking`,
   FILTERED_PINS_AMOUNT: 5,

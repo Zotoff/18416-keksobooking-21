@@ -1,6 +1,5 @@
 "use strict";
 
-
 const announcements = [];
 const getAnnouncements = (data) => {
   for (let item of data) {
@@ -111,32 +110,37 @@ const fillDomWithAnnouncements = (data) => {
 
   FRAGMENT.appendChild(generateCardElement(data));
   window.map.mapSelector.insertBefore(FRAGMENT, window.map.mapFiltersContainer);
-};
-const handleCardEvents = () => {
+
   const popUpElement = document.querySelector(`.popup`);
-  if (popUpElement) {
-    const popUpCloseBtn = popUpElement.querySelector(`.popup__close`);
-    popUpCloseBtn.addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      window.utils.hideElement(popUpElement);
-    });
-    popUpCloseBtn.addEventListener(`keydown`, (evt) => {
-      const hideElement = () => {
-        popUpElement.classList.add(`hidden`);
-      };
-      window.utils.checkKeyDownEvent(evt, `Enter`, hideElement);
-    });
-    document.addEventListener(`keydown`, (evt) => {
-      const hideElement = () => {
-        popUpElement.classList.add(`hidden`);
-      };
-      window.utils.checkKeyDownEvent(evt, `Escape`, hideElement);
-    });
-  }
+
+  const closePopUpButton = popUpElement.querySelector(`.popup__close`);
+
+  const closePopUp = () => {
+    popUpElement.remove();
+    closePopUpButton.removeEventListener(`click`, clickCloseButton);
+    document.removeEventListener(`keydown`, pressEscapeOnPopup);
+  };
+  const pressEscapeOnPopup = (evt) => {
+    window.utils.checkKeyDownEvent(evt, `Escape`, closePopUp);
+  };
+  const clickCloseButton = () => {
+    closePopUp();
+  };
+  closePopUpButton.addEventListener(`click`, clickCloseButton);
+
+  document.addEventListener(`keydown`, pressEscapeOnPopup);
 };
+
+const removeCardElements = () => {
+  const cards = document.querySelectorAll(`.map__card`);
+  cards.forEach((card) => {
+    card.remove();
+  });
+};
+
 window.card = {
   fillDomWithAnnouncements,
-  handleCardEvents,
   getAnnouncements,
-  announcements
+  announcements,
+  removeCardElements
 };
